@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>m.m (met? meet!) 다인원 회의 조율 앱</title>
+<meta name="description" content="모두가 되는 시간이 아니라 꼭 필요한 사람이 되는 시간을 찾는 다인원 회의 조율 앱. 업무 메신저 부가 서비스로 설계한 UX/UI 케이스 스터디.">
+<link rel="icon" href="data:,">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css">
+
+<style>
+/* ════════════════════════════════════════════════
+   m.m  design tokens
+   color  : 브랜드 지정값 6종 + 파생 중성색 2종만 사용
+   radius : 카드 16 / 버튼 10 / 칩 999  세 단계만 사용
+   ════════════════════════════════════════════════ */
+:root{
+  --blue:#014BAA;  --violet:#5001AA;
+  --grad:linear-gradient(135deg,#5001AA 0%,#014BAA 100%);
+  --ink:#101010;   --gray:#353535;  --sub:#6E6E6E;
+  --line:#EBEBEB;  --bg:#FCFCFC;    --card:#FFFFFF;  --tint:#F4F6FA;
+
+  --r-card:16px;   --r-btn:10px;    --r-pill:999px;
+  --pad:clamp(84px,11vw,140px);
+  --wrap:1200px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:92px;-webkit-text-size-adjust:100%}
+body{
+  font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,system-ui,"Malgun Gothic",sans-serif;
+  background:var(--bg); color:var(--ink);
+  line-height:1.7; letter-spacing:-.015em;
+  word-break:keep-all;          /* 한글 단어 중간 줄바꿈 방지 */
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:3px;border-radius:4px}
+
+/* ---------- 공통 ---------- */
+.wrap{width:100%;max-width:var(--wrap);margin-inline:auto;padding-inline:24px}
+section{padding-block:var(--pad)}
+.tinted{background:var(--tint)}
+.head{margin-bottom:clamp(44px,5.5vw,76px)}
+.head h2{max-width:660px}
+.head h2{font-size:clamp(1.65rem,3.4vw,2.4rem);font-weight:700;letter-spacing:-.035em;line-height:1.3}
+.head p{margin-top:18px;color:var(--gray);font-size:1.0625rem}
+
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;white-space:nowrap;
+  padding:14px 26px;border-radius:var(--r-btn);font-size:.9375rem;font-weight:600;letter-spacing:-.01em;
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s,color .25s;
+}
+.btn-fill{background:var(--grad);color:#fff;box-shadow:0 6px 20px rgba(1,75,170,.22)}
+.btn-fill:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(1,75,170,.3)}
+.btn-line{border:1px solid var(--line);background:var(--card);color:var(--ink)}
+.btn-line:hover{transform:translateY(-2px);border-color:var(--blue);color:var(--blue)}
+.btn:active{transform:scale(.97)}
+.btn-sm{padding:10px 18px;font-size:.875rem}
+
+/* ---------- 네비게이션 ---------- */
+header{
+  position:fixed;inset:0 0 auto;z-index:60;height:68px;display:flex;align-items:center;
+  background:rgba(252,252,252,.82);backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;transition:border-color .3s
+}
+header.on{border-bottom-color:var(--line)}
+header .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px}
+.brand{display:flex;align-items:center;gap:9px;font-weight:700;letter-spacing:-.04em;font-size:1.0625rem}
+.brand svg{width:24px;height:auto}
+nav{display:flex;gap:28px;font-size:.9375rem;font-weight:500;color:var(--gray)}
+nav a{position:relative;padding-block:4px;transition:color .2s}
+nav a::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:1.5px;background:var(--blue);
+  transform:scaleX(0);transform-origin:left;transition:transform .35s var(--ease)}
+nav a:hover{color:var(--blue)}
+nav a:hover::after{transform:scaleX(1)}
+
+/* ---------- 히어로 ---------- */
+.hero{position:relative;min-height:100dvh;display:flex;align-items:center;
+  padding-top:118px;padding-bottom:80px;overflow:hidden}
+.circles{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.circles i{position:absolute;display:block;border-radius:50%;filter:blur(70px);opacity:.5;will-change:transform}
+.c1{width:44vw;height:44vw;min-width:340px;min-height:340px;left:-8vw;top:-6vw;background:#B9A6E8;animation:f1 18s ease-in-out infinite}
+.c2{width:38vw;height:38vw;min-width:300px;min-height:300px;right:-6vw;top:8vh;background:#A9C2EC;animation:f2 22s ease-in-out infinite}
+.c3{width:30vw;height:30vw;min-width:240px;min-height:240px;left:34vw;bottom:-12vw;background:#C8D6F2;animation:f3 26s ease-in-out infinite}
+@keyframes f1{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(6vw,5vh,0) scale(1.12)}}
+@keyframes f2{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(-7vw,7vh,0) scale(.9)}}
+@keyframes f3{0%,100%{transform:translate3d(0,0,0) scale(1)}50%{transform:translate3d(4vw,-6vh,0) scale(1.15)}}
+/* 다음 섹션으로 자연스럽게 이어지는 하단 페이드 */
+.hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34%;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,rgba(252,252,252,0) 0%,rgba(252,252,252,.72) 55%,var(--bg) 100%)}
+
+.hero .wrap{position:relative;z-index:1;display:flex;align-items:center;gap:clamp(32px,4vw,48px);flex-wrap:wrap}
+.hero-copy{flex:1 1 420px;min-width:290px}
+.hero h1{font-size:clamp(1.5rem,3.4vw,3rem);font-weight:700;letter-spacing:-.045em;line-height:1.22}
+.hero h1 em{font-style:normal;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{margin-top:22px;font-size:clamp(1rem,1.5vw,1.1875rem);color:var(--gray);max-width:37ch}
+.hero-cta{display:flex;gap:12px;margin-top:34px;flex-wrap:wrap}
+.hero-art{flex:0 3 490px;display:flex;align-items:center;justify-content:center}
+.hero-art .phone{flex:0 0 auto}
+.phone.lead{max-width:268px;z-index:1}                       /* 앞 : 온보딩 애니메이션 */
+.phone.trail{max-width:236px;margin-left:-32px;transform:translateY(28px);z-index:0}
+
+/* ---------- 폰 목업 ---------- */
+.phone{position:relative;width:100%;max-width:288px;
+  border:9px solid #101010;border-radius:42px;background:#101010;
+  box-shadow:0 26px 60px rgba(16,16,16,.2)}
+.phone::before{content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);
+  width:86px;height:19px;background:#101010;border-radius:var(--r-pill);z-index:2}
+.screen{position:relative;display:flex;aspect-ratio:402/874;overflow:hidden;border-radius:33px;background:#fff}
+.screen img{width:100%;flex:0 0 auto;margin-block:auto;transition:transform 2.2s var(--ease),opacity .3s ease}
+.phone.sm{max-width:238px;border-width:8px;border-radius:36px}
+.phone.sm .screen{border-radius:28px}
+.phone.xs{max-width:214px;border-width:7px;border-radius:32px}
+.phone.xs .screen{border-radius:26px}
+/* 모달 컷 : 이미지에 그림자가 포함되어 있어 별도 테두리를 두지 않는다 */
+.modalshot{width:100%;max-width:240px}
+.shotcap{max-width:280px;margin-top:14px;margin-inline:auto;font-size:.8125rem;color:var(--sub);text-align:center;line-height:1.55}
+
+/* ---------- 문제 ---------- */
+.problems{display:flex;flex-direction:column;border-top:1px solid var(--line);
+  margin-inline:calc(-1 * clamp(14px,1.6vw,22px))}
+.problem{display:flex;gap:clamp(20px,4vw,56px);flex-wrap:wrap;
+  padding:clamp(30px,4vw,42px) clamp(14px,1.6vw,22px);
+  border-bottom:1px solid var(--line);transition:background-color .3s}
+.problem:hover{background:rgba(1,75,170,.025)}
+.problem .no{flex:0 0 auto;width:42px;font-size:1.0625rem;font-weight:700;color:var(--blue);
+  font-variant-numeric:tabular-nums;padding-top:2px}
+.problem .body{flex:1 1 300px;min-width:250px}
+.problem h3{font-size:clamp(1.125rem,2vw,1.375rem);font-weight:700;letter-spacing:-.03em;line-height:1.45}
+.problem p{margin-top:12px;color:var(--gray);font-size:.9688rem;max-width:52ch}
+.problem .quote{flex:0 1 300px;min-width:240px;align-self:flex-start;padding:18px 20px;
+  background:var(--tint);border-radius:var(--r-card);font-size:.9375rem;color:var(--gray);line-height:1.65}
+.problem .quote span{display:block;margin-top:10px;font-size:.8125rem;color:var(--sub)}
+
+/* ---------- 왜 메신저 안인가 ---------- */
+.why{display:flex;gap:clamp(32px,5vw,72px);flex-wrap:wrap;align-items:flex-start}
+.why-cols{flex:1 1 560px;min-width:290px;display:flex;flex-wrap:wrap;
+  background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);overflow:hidden}
+.why-box{flex:1 1 260px;min-width:250px;padding:32px 28px;transition:background-color .35s}
+.why-box+.why-box{box-shadow:inset 1px 0 0 var(--line)}
+.why-box.on{background:rgba(1,75,170,.04)}
+.why-mark{display:flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border-radius:var(--r-pill);background:#D8D8D8;margin-bottom:16px;position:relative}
+.why-box.on .why-mark{background:var(--grad)}
+.why-mark::before,.why-mark::after{content:"";position:absolute;background:#fff;border-radius:2px}
+.why-mark::before{width:13px;height:2px;transform:rotate(45deg)}
+.why-mark::after{width:13px;height:2px;transform:rotate(-45deg)}
+.why-box.on .why-mark::before{width:6px;transform:translate(-3px,2px) rotate(45deg)}
+.why-box.on .why-mark::after{width:11px;transform:translate(2px,0) rotate(-45deg)}
+.why-box em{display:block;font-style:normal;font-size:.8125rem;font-weight:700;color:var(--sub);margin-bottom:10px}
+.why-box.on em{color:var(--blue)}
+.why-box h3{font-size:1.125rem;font-weight:700;letter-spacing:-.03em;margin-bottom:12px}
+.why-box p{font-size:.9375rem;color:var(--gray);line-height:1.65;min-height:5.2em}
+.why-box.on p{color:var(--ink)}
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:20px}
+.path span{padding:6px 11px;border-radius:var(--r-pill);background:var(--tint);
+  font-size:.75rem;color:var(--gray);white-space:nowrap}
+.path span+span{position:relative;margin-left:13px}
+.path span+span::before{content:"";position:absolute;left:-13px;top:50%;width:6px;height:6px;
+  border-top:1.5px solid #C4C4C4;border-right:1.5px solid #C4C4C4;transform:translateY(-50%) rotate(45deg)}
+.why-box.on .path span{background:rgba(1,75,170,.09);color:var(--blue);font-weight:600}
+.why-art{flex:0 1 268px;min-width:230px;display:flex;flex-direction:column;align-items:center}
+.swipe-hint{display:none;flex:1 1 100%;margin-top:14px;font-size:.8125rem;color:var(--sub)}
+
+/* ---------- 변수 ---------- */
+.scope{display:flex;gap:20px;flex-wrap:wrap}
+.scope-col{flex:1 1 300px;min-width:265px;display:flex;flex-direction:column;
+  background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r-card);padding:30px 26px;overflow:hidden;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease),border-color .35s}
+.scope-col:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(16,16,16,.07);border-color:#DDE4EF}
+.scope-col h3{font-size:1.1875rem;font-weight:700;letter-spacing:-.03em;margin-bottom:20px}
+.vs{padding-block:16px;border-top:1px solid var(--line)}
+.vs.mm{margin-top:auto}
+.vs:first-of-type{border-top:none;padding-top:0}
+.vs em{display:block;font-style:normal;font-size:.8125rem;font-weight:600;color:var(--sub);margin-bottom:6px}
+.vs p{font-size:.9375rem;color:var(--gray);line-height:1.6}
+/* m.m 쪽은 카드 아래 전체를 브랜드 톤으로 채워 대비를 만든다 */
+.vs.mm{margin:22px -26px -30px;padding:22px 26px 28px;border-top:none;
+  background:rgba(1,75,170,.055);box-shadow:inset 0 1px 0 rgba(1,75,170,.14)}
+.vs.mm em{color:var(--blue);font-weight:700;font-size:.875rem;margin-bottom:8px}
+.vs.mm p{color:var(--ink);font-weight:500}
+.note{margin-top:24px;font-size:.8438rem;color:var(--sub)}
+.note a{color:var(--blue);font-weight:600;box-shadow:inset 0 -1px 0 rgba(1,75,170,.35);transition:box-shadow .25s}
+.note a:hover{box-shadow:inset 0 -1px 0 var(--blue)}
+.note-top{margin-top:0;margin-bottom:clamp(28px,3vw,40px)}
+.head.tight{margin-bottom:22px}
+
+/* ---------- 해결 ---------- */
+.feat{display:flex;align-items:center;gap:clamp(32px,4vw,64px);flex-wrap:wrap;padding-block:clamp(40px,5vw,60px)}
+.feat:nth-of-type(even){flex-direction:row-reverse}
+.feat-txt{flex:1 1 380px;min-width:285px}
+.tag{display:inline-block;padding:6px 13px;border-radius:var(--r-pill);background:rgba(1,75,170,.08);
+  color:var(--blue);font-size:.75rem;font-weight:700;margin-bottom:18px}
+.feat-txt h3{font-size:clamp(1.375rem,2.5vw,1.75rem);font-weight:700;letter-spacing:-.035em;line-height:1.38}
+.feat-txt p{margin-top:16px;color:var(--gray);font-size:1rem;max-width:46ch}
+.feat-txt ul{margin-top:22px;display:flex;flex-direction:column;gap:11px;list-style:none}
+.feat-txt li{position:relative;padding-left:20px;font-size:.9375rem;color:var(--gray)}
+.feat-txt li::before{content:"";position:absolute;left:0;top:.65em;width:7px;height:7px;border-radius:50%;background:var(--grad)}
+.vs-line{margin-top:14px;padding-left:15px;border-left:2px solid #D6DEEA;
+  font-size:.9375rem;color:var(--sub);line-height:1.6}
+.alt{margin-top:24px;padding:18px 20px;background:var(--card);
+  border:1px solid var(--line);border-radius:var(--r-btn)}
+.alt em{display:block;font-style:normal;font-size:.75rem;font-weight:700;
+  letter-spacing:.08em;color:var(--blue);margin-bottom:9px}
+.alt p{margin:0;font-size:.9063rem;color:var(--gray);line-height:1.65;max-width:none}
+.feat-art{flex:1.15 1 340px;display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap}
+
+/* ---------- 사용 흐름 ---------- */
+.flow{display:flex;gap:clamp(28px,4vw,64px);align-items:flex-start;flex-wrap:wrap}
+.flow-list{flex:1 1 400px;min-width:280px;display:flex;flex-direction:column}
+.step{display:flex;gap:16px;align-items:flex-start;width:100%;text-align:left;
+  padding:15px 17px;border-radius:var(--r-btn);border-left:2px solid var(--line);
+  transition:background-color .3s var(--ease),border-color .3s var(--ease)}
+.step:hover{background:rgba(1,75,170,.035)}
+.step .idx{flex:0 0 auto;font-size:.8125rem;font-weight:700;color:var(--sub);
+  font-variant-numeric:tabular-nums;padding-top:3px;transition:color .3s}
+.step .txt strong{display:block;font-size:1rem;font-weight:600;letter-spacing:-.02em;transition:color .3s}
+.step .txt span{display:block;margin-top:5px;font-size:.875rem;color:var(--sub);line-height:1.6}
+.step[aria-selected="true"]{background:rgba(1,75,170,.055);border-left-color:var(--blue)}
+.step[aria-selected="true"] .idx,.step[aria-selected="true"] .txt strong{color:var(--blue)}
+.flow-art{flex:0 1 320px;min-width:230px;display:flex;flex-direction:column;align-items:center;
+  gap:16px;position:sticky;top:100px}
+.flow-cap{font-size:.8125rem;color:var(--sub);text-align:center}
+.flow-hint{font-size:.8125rem;color:var(--sub);margin-top:20px;padding-left:17px}
+
+/* ---------- 시나리오 ---------- */
+.callout{display:flex;gap:16px;align-items:flex-start;padding:24px 26px;background:var(--card);
+  border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:var(--r-card);
+  margin-bottom:clamp(36px,5vw,56px)}
+.callout p{font-size:.9688rem;color:var(--gray);line-height:1.7}
+.callout b{color:var(--ink)}
+.cases{display:flex;flex-direction:column;align-items:center}
+.ctabs{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:26px}
+.ctab{display:flex;align-items:center;gap:9px;padding:11px 20px;border-radius:var(--r-pill);
+  border:1px solid var(--line);background:var(--card);font-size:.9063rem;font-weight:600;color:var(--gray);
+  transition:background-color .3s var(--ease),border-color .3s,color .3s,transform .25s var(--ease)}
+.ctab b{font-size:.8125rem;color:var(--sub);transition:color .3s}
+.ctab:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-2px)}
+.ctab[aria-selected="true"]{background:var(--grad);border-color:transparent;color:#fff}
+.ctab[aria-selected="true"] b{color:rgba(255,255,255,.72)}
+.case-desc{font-size:.9688rem;color:var(--gray);text-align:center;line-height:1.65;
+  max-width:46ch;min-height:3.4em;margin-bottom:26px;transition:opacity .3s ease}
+.case{flex:1 1 250px;min-width:230px;display:flex;flex-direction:column;align-items:center}
+.case-badge{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:26px;
+  padding-inline:10px;border-radius:var(--r-pill);background:var(--grad);color:#fff;
+  font-size:.8125rem;font-weight:700;margin-bottom:14px}
+.case h3{font-size:1.0625rem;font-weight:700;letter-spacing:-.03em;text-align:center;margin-bottom:8px}
+.case p{font-size:.9063rem;color:var(--gray);text-align:center;line-height:1.62;
+  margin-bottom:22px;max-width:32ch;min-height:4.9em}   /* 3줄 기준 : 폰 상단선을 맞춘다 */
+.roles{display:flex;gap:clamp(20px,4vw,48px);flex-wrap:wrap;align-items:center;
+  margin-top:clamp(48px,6vw,72px);padding-top:clamp(40px,5vw,56px);border-top:1px solid var(--line)}
+.roles-txt{flex:1 1 340px;min-width:280px;padding:24px 26px;background:var(--card);
+  border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:var(--r-card)}
+.roles-txt h3{font-size:1.25rem;font-weight:700;letter-spacing:-.03em}
+.roles-txt p{margin-top:12px;font-size:.9688rem;color:var(--gray);line-height:1.7}
+.roles-art{flex:1 1 400px;display:flex;gap:clamp(18px,3vw,36px);justify-content:center;flex-wrap:wrap}
+
+/* ---------- 종료 보장 ---------- */
+/* 순서가 있는 단계라 카드 대신 이어지는 흐름으로 */
+.chain{display:flex;flex-wrap:wrap;gap:0}
+.link{flex:1 1 230px;min-width:210px;padding-right:28px;position:relative}
+.link::after{content:"";position:absolute;left:40px;right:16px;top:14px;height:2px;
+  background:linear-gradient(90deg,rgba(1,75,170,.32),rgba(1,75,170,.1))}
+.link:last-child::after{display:none}
+.link b{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border-radius:var(--r-pill);background:var(--card);border:2px solid var(--blue);
+  color:var(--blue);font-size:.8125rem;font-weight:700;margin-bottom:18px;transition:transform .3s var(--ease)}
+.link:hover b{transform:scale(1.12)}
+.link.last b{background:var(--grad);border-color:transparent;color:#fff}
+.link h3{font-size:1.0625rem;font-weight:700;letter-spacing:-.03em;line-height:1.45}
+.link p{margin-top:10px;font-size:.9063rem;color:var(--gray);line-height:1.62}
+.endtag{display:inline-block;margin-left:7px;padding:4px 10px;border-radius:var(--r-pill);
+  background:var(--grad);color:#fff;font-size:.6875rem;font-weight:700;vertical-align:2px;white-space:nowrap}
+.tradeoff{margin-top:32px;display:flex;gap:clamp(24px,4vw,48px);flex-wrap:wrap;align-items:center;
+  padding:30px 28px;border:1px solid #DDE4EF;border-radius:var(--r-card);background:var(--tint)}
+.tradeoff div{flex:1 1 340px;min-width:270px}
+.tradeoff h3{font-size:1.0625rem;font-weight:700;letter-spacing:-.03em;margin-bottom:12px}
+.steptag{display:inline-block;margin-right:9px;padding:4px 10px;border-radius:var(--r-pill);
+  background:rgba(1,75,170,.09);color:var(--blue);font-size:.6875rem;font-weight:700;vertical-align:2px}
+.tradeoff p{font-size:.9375rem;color:var(--gray)}
+.tradeoff p+p{margin-top:12px;color:var(--sub);font-size:.875rem}
+
+/* ---------- 상태 표 ---------- */
+.tablewrap{border:1px solid var(--line);border-radius:var(--r-card);background:var(--card);overflow:hidden}
+table{width:100%;border-collapse:collapse;font-size:.9375rem}
+th,td{padding:17px 22px;text-align:left;vertical-align:top}
+thead th{font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--sub);
+  border-bottom:1px solid var(--line);white-space:nowrap}
+tbody tr+tr td{border-top:1px solid var(--line)}
+tbody td:first-child{font-weight:600;white-space:nowrap}
+tbody td:nth-child(2){color:var(--blue);font-weight:600;white-space:nowrap}
+tbody td:last-child{color:var(--gray)}
+tbody tr{transition:background-color .25s}
+tbody tr:hover{background:rgba(1,75,170,.025)}
+
+/* ---------- 채택하지 않은 대안 ---------- */
+.decisions{display:flex;flex-wrap:wrap;gap:16px}
+.dec{flex:1 1 380px;min-width:285px;background:var(--card);border:1px solid var(--line);
+  border-radius:var(--r-card);padding:28px 26px;transition:transform .35s var(--ease),box-shadow .35s var(--ease)}
+.dec:hover{transform:translateY(-5px);box-shadow:0 16px 36px rgba(16,16,16,.06)}
+.dec em{display:block;font-style:normal;font-size:.75rem;font-weight:700;letter-spacing:.1em;color:var(--sub);margin-bottom:12px}
+.dec h3{font-size:1.0625rem;font-weight:700;letter-spacing:-.03em;line-height:1.5;
+  text-decoration:line-through;text-decoration-color:#C9C9C9}
+.dec p{margin-top:14px;font-size:.9375rem;color:var(--gray);line-height:1.65}
+.dec p b{color:var(--blue);font-weight:600}
+
+/* ---------- 디자인 시스템 ---------- */
+.ds{display:flex;flex-wrap:wrap;gap:16px}
+.ds-cell{background:var(--card);border:1px solid var(--line);border-radius:var(--r-card);padding:30px 28px}
+.ds-cell h3{font-size:1.0625rem;font-weight:700;letter-spacing:-.03em;margin-bottom:18px}
+.ds-logo{flex:1 1 300px;min-width:280px;display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.ds-logo svg{width:92px;height:auto;flex:0 0 auto}
+.ds-logo div{flex:1 1 200px;min-width:180px}
+.ds-logo p{font-size:.9375rem;color:var(--gray);line-height:1.65}
+.ds-color{flex:1.6 1 560px;min-width:290px}
+.swatches{display:flex;flex-wrap:wrap;gap:12px}
+.sw{flex:1 1 calc(33.333% - 8px);min-width:112px}
+.sw i{display:block;height:56px;border-radius:var(--r-btn);border:1px solid rgba(16,16,16,.08)}
+.sw b{display:block;margin-top:9px;font-size:.8125rem;font-weight:600}
+.sw span{display:block;font-size:.75rem;color:var(--sub);font-variant-numeric:tabular-nums}
+.ds-type{flex:1 1 300px;min-width:280px}
+.typerow{display:flex;align-items:baseline;justify-content:space-between;gap:16px;
+  padding-block:13px;border-top:1px solid var(--line)}
+.typerow:first-of-type{border-top:none;padding-top:0}
+.typerow span{font-size:.75rem;color:var(--sub);white-space:nowrap}
+.ds-shape{flex:1 1 300px;min-width:280px}
+.ds-badge{flex:1 1 300px;min-width:280px}
+.badges{display:flex;flex-wrap:wrap;gap:8px}
+.bd{padding:6px 13px;border-radius:var(--r-pill);font-size:.8125rem;font-weight:600}
+.bd.on{background:rgba(1,75,170,.09);color:var(--blue)}
+.bd.wait{background:var(--gray);color:#fff}
+.bd.off{background:var(--line);color:var(--gray)}
+.shaperow{display:flex;align-items:center;gap:16px;padding-block:14px;border-top:1px solid var(--line)}
+.shaperow:first-of-type{border-top:none;padding-top:0}
+.shaperow i{flex:0 0 auto;background:#E2E8F3;border:1px solid #D3DCEC}
+.shaperow b{font-size:.9375rem;font-weight:600}
+.shaperow span{font-size:.8125rem;color:var(--sub);margin-left:auto;font-variant-numeric:tabular-nums}
+
+/* ---------- 프로젝트 ---------- */
+.about{display:flex;gap:clamp(36px,6vw,80px);flex-wrap:wrap;align-items:flex-start}
+.about-main{flex:1 1 420px;min-width:285px}
+.stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:8px}
+.stat{flex:1 1 calc(50% - 7px);min-width:130px;padding:22px 20px;background:var(--card);
+  border:1px solid var(--line);border-radius:var(--r-card)}
+.stat b{display:block;font-size:1.5rem;font-weight:700;letter-spacing:-.03em;line-height:1.2}
+.stat span{display:block;margin-top:6px;font-size:.8125rem;color:var(--sub)}
+.about-side{flex:1 1 300px;min-width:265px}
+.about-side h3{font-size:1rem;font-weight:700;margin-bottom:14px}
+.about-side ul{list-style:none;display:flex;flex-direction:column;gap:12px}
+.about-side li{font-size:.9063rem;color:var(--gray);padding-left:16px;position:relative;line-height:1.6}
+.about-side li::before{content:"";position:absolute;left:0;top:.68em;width:6px;height:6px;border-radius:50%;background:#C9C9C9}
+.contact{margin-top:32px;display:flex;gap:12px;flex-wrap:wrap}
+
+footer{border-top:1px solid var(--line);padding-block:42px;background:var(--card)}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer p{font-size:.8438rem;color:var(--sub)}
+footer a{font-size:.8438rem;color:var(--gray);transition:color .2s}
+footer a:hover{color:var(--blue)}
+
+/* ---------- 스크롤 등장 ---------- */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.rv.in{opacity:1;transform:none}
+
+/* ---------- 반응형 ---------- */
+@media(max-width:900px){
+  nav{display:none}
+  /* 히어로 : 폰 아래 여백과 긴 페이드로 다음 섹션과 부드럽게 이어지게 */
+  .hero{min-height:auto;padding-bottom:clamp(60px,9vw,96px)}
+  .hero::after{height:48%}
+  .hero h1{font-size:clamp(1.5rem,5.6vw,3rem)}
+  .hero-art{flex:1 1 100%;margin-top:44px}
+  .phone.trail{display:none}
+  /* 부가 서비스 섹션 : 폰 목업은 감추고 주석만 남긴다 */
+  .why-art{flex:1 1 100%;min-width:0;align-items:flex-start;margin-top:4px}
+  .why-art .phone{display:none}
+  .why-art .shotcap{max-width:none;margin:0;text-align:left}
+  /* 종료 보장 : 세로 타임라인으로 */
+  .chain{flex-direction:column}
+  .link{flex:none;width:100%;min-width:0;padding:0 0 30px 46px}
+  .link:last-child{padding-bottom:0}
+  .link b{position:absolute;left:0;top:-1px;margin:0}
+  .link::after{left:14px;top:36px;bottom:4px;right:auto;width:2px;height:auto;
+    background:linear-gradient(180deg,rgba(1,75,170,.32),rgba(1,75,170,.1))}
+  .feat:nth-of-type(even){flex-direction:row}
+  .flow-list{flex:1 1 300px}
+  .flow-art{flex:0 0 206px;min-width:0;top:92px}
+  .flow-art .phone{max-width:206px}
+}
+@media(max-width:640px){
+  .wrap{padding-inline:20px}
+  header{height:62px}
+  html{scroll-padding-top:74px}
+  .hero{padding-top:94px}
+  .problem .quote{flex-basis:100%}
+  .btn{padding:13px 22px}
+  /* 사용 흐름 : 폰을 상단에 고정해 클릭한 화면이 바로 보이게 한다 */
+  .flow{flex-direction:column;gap:0}
+  .flow-art{order:-1;flex:none;width:100%;position:sticky;top:62px;z-index:20;
+    background:var(--tint);padding-block:14px;margin-bottom:20px;
+    box-shadow:0 10px 16px -12px rgba(16,16,16,.35)}
+  .flow-art .phone{max-width:158px}
+  /* 상태 표 : 가로 스크롤 대신 카드로 전환 */
+  thead{display:none}
+  tbody tr{display:block;padding:18px 20px}
+  tbody tr+tr{border-top:1px solid var(--line)}
+  tbody tr+tr td{border-top:none}
+  tbody td{display:block;padding:0}
+  tbody td:first-child{font-size:.75rem;color:var(--sub)}
+  tbody td:nth-child(2){font-size:1.0625rem;margin-top:2px}
+  tbody td:last-child{margin-top:7px;font-size:.9063rem}
+  .ds-cell{padding:26px 22px}
+}
+
+/* 좁은 화면에서는 두 비교 카드를 좌우 스와이프로 */
+@media(max-width:545px){
+  .why-cols{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .why-cols::-webkit-scrollbar{display:none}
+  .why-box{flex:0 0 86%;min-width:0;scroll-snap-align:center}
+  .why-box p{min-height:0}
+  .swipe-hint{display:block}
+}
+
+/* ---------- 모션 최소화 ---------- */
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
+  .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+
+<body>
+
+<!-- ══════════ NAV ══════════ -->
+<header id="hd">
+  <div class="wrap">
+    <a href="#top" class="brand" aria-label="m.m 홈">
+      <svg viewBox="0 0 218 198" aria-hidden="true"><path d="M58 58h22v41s-4.83-7.1-11-7.1S58 99 58 99V58Z" fill="#605C6E"/><path d="M138 58h22v41s-4.83-7.1-11-7.1-11 7.1-11 7.1V58Z" fill="#605C6E"/><path d="M59.04 167.88a29.52 29.52 0 1 1-59.04 0V94.08c0-24.46 19.83-44.28 44.28-44.28h3.7c7.92 0 15.11 3.13 20.42 8.21-.88 1.31-1.74 2.7-2.55 4.09-5.02 8.65-6.81 18.68-6.81 28.68v77.1Z" fill="#0C4BAC"/><path d="M158.95 167.88a29.52 29.52 0 1 0 59.04 0V94.08c0-24.46-19.83-44.28-44.28-44.28h-3.69c-7.93 0-15.12 3.13-20.42 8.21.87 1.31 1.73 2.7 2.54 4.09 5.02 8.65 6.81 18.68 6.81 28.68v77.1Z" fill="#4D02AA"/><path d="M149.58 58.02c-5.26 0-8.64 11.28-10.16 17.77-.68 2.96-.91 5.99-.91 9.03v83.07a29.52 29.52 0 1 1-59.04 0V84.82c0-3.04-.23-6.07-.92-9.03-1.51-6.49-4.9-17.77-10.16-17.77h.02c.27-4.55 18.33-8.22 40.58-8.22s40.31 3.67 40.58 8.22h.01Z" fill="#2C29AB"/><circle cx="68.4" cy="18.45" r="18.45" fill="#1F40AD"/><circle cx="149.58" cy="18.45" r="18.45" fill="#3D1CAC"/></svg>
+      m.m
+    </a>
+    <nav>
+      <a href="#problem">문제</a>
+      <a href="#solution">해결</a>
+      <a href="#flow">사용 흐름</a>
+      <a href="#design">디자인</a>
+      <a href="#about">프로젝트</a>
+    </nav>
+    <a class="btn btn-fill btn-sm" href="https://www.figma.com/proto/XfxpuROsTDVo68HQIm1VpC/mm-%ED%94%84%EB%A1%9C%ED%86%A0?node-id=2011-4060&starting-point-node-id=2011%3A4060&scaling=min-zoom&content-scaling=fixed" target="_blank" rel="noopener">프로토타입 보기</a>
+  </div>
+</header>
+
+<!-- ══════════ HERO ══════════ -->
+<section class="hero" id="top">
+  <div class="circles" aria-hidden="true"><i class="c1"></i><i class="c2"></i><i class="c3"></i></div>
+  <div class="wrap">
+    <div class="hero-copy">
+      <h1>모두가 되는 시간이 아니라,<br><em>꼭 필요한 사람이 되는 시간</em></h1>
+      <p>Slack 같은 업무 메신저에 붙는 다인원 회의 조율 앱. 별도 링크도, 별도 로그인도 없습니다.</p>
+      <div class="hero-cta">
+        <a class="btn btn-fill" href="#problem">설계 과정 보기</a>
+        <a class="btn btn-line" href="https://www.figma.com/proto/XfxpuROsTDVo68HQIm1VpC/mm-%ED%94%84%EB%A1%9C%ED%86%A0?node-id=2011-4060&starting-point-node-id=2011%3A4060&scaling=min-zoom&content-scaling=fixed" target="_blank" rel="noopener">프로토타입 보기</a>
+      </div>
+    </div>
+    <div class="hero-art">
+      <div class="phone lead"><div class="screen"><img id="obImg" src="./img/onboarding.webp" alt="m.m 온보딩 애니메이션. 로고와 소개 문구, 메신저 연동 버튼이 차례로 나타난다."></div></div>
+      <div class="phone trail"><div class="screen"><img src="./img/hero-create.webp" alt="새 미팅 만들기 화면. 참석자마다 필수 또는 선택 태그가 붙어 있다."></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ 문제 ══════════ -->
+<section id="problem">
+  <div class="wrap">
+    <div class="head rv">
+      <h2>6명이 한 시간 모이는 데,<br>왜 이렇게 오래 걸릴까</h2>
+      <p>직장인 6명 인터뷰와 기존 조율 서비스 분석에서 네 가지 문제를 찾았습니다.</p>
+    </div>
+    <div class="problems">
+      <article class="problem rv">
+        <div class="no">01</div>
+        <div class="body">
+          <h3>인원이 늘수록 모두 가능한 시간이 사라진다</h3>
+          <p>5명이 있는 단톡방에서 약속을 잡는 일은 한 번에 끝나는 법이 거의 없습니다. 톡을 바로 확인하지 않는 사람이 있고, 확인해도 그 시간에 안 되는 사람이 있습니다. 결국 5명 모두가 가능한 날을 찾기보다, 한두 명이 빠진 채로 진행하는 경우가 더 많습니다.</p>
+        </div>
+        <div class="quote">“모두가 가능한 날짜를 맞추기 어렵다. 누구는 되고 누구는 안 되고.”<span>인터뷰 응답</span></div>
+      </article>
+      <article class="problem rv">
+        <div class="no">02</div>
+        <div class="body">
+          <h3>응답을 무작정 기다려야 한다</h3>
+          <p>개설자가 “수요일 3시 어때요?”라고 물으면, 답은 30분 뒤에 올 수도 다음 날 오전에 올 수도 있습니다. 그 사이 개설자는 다시 물어봐야 할지 더 기다려야 할지 판단할 근거가 없습니다. 몇 명이 확인했는지, 몇 명이 남았는지조차 보이지 않기 때문입니다.</p>
+        </div>
+        <div class="quote">일일이 연락해 가능 여부를 묻고, 응답이 올 때까지 기다리는 구간이 조율 시간의 대부분을 차지했습니다.<span>인터뷰 종합</span></div>
+      </article>
+      <article class="problem rv">
+        <div class="no">03</div>
+        <div class="body">
+          <h3>참석 조건을 사람이 직접 취합하고 판단한다</h3>
+          <p>참석자마다 중요도가 다른데 기존 도구는 이를 반영하지 못합니다. 생일 모임이면 생일자가, 집들이면 집주인이 편한 시간을 기준으로 날짜를 잡지만, 이 우선순위는 도구가 아니라 사람이 매번 직접 판단해야 합니다.</p>
+        </div>
+        <div class="quote">“그날 약속의 주인공을 우선순위에 둔다.” “없어도 되는 사람은 그냥 패스한다.”<span>인터뷰 응답</span></div>
+      </article>
+      <article class="problem rv">
+        <div class="no">04</div>
+        <div class="body">
+          <h3>반복 미팅도 매번 백지에서 다시 입력한다</h3>
+          <p>6명 중 5명이 반복 모임에도 조건을 새로 확인한다고 답했습니다. 문제는 재확인 자체가 아니라, 이전 값을 참고할 방법이 없다는 점이었습니다.</p>
+        </div>
+        <div class="quote">“상황은 항상 달라지니까.” 재확인은 필요하지만, 매번 처음부터 물어볼 필요는 없습니다.<span>인터뷰 응답</span></div>
+      </article>
+    </div>
+    <p class="note rv">네 문제 모두 단톡방과 팀 채널, 즉 메신저 안에서 벌어집니다. 인터뷰 사례는 회사 회의보다 사적 모임이 많았지만 구조는 같았고, m.m은 이 문제를 조율이 실제로 시작되는 자리인 업무 메신저 안에서 풀었습니다.</p>
+  </div>
+</section>
+<!-- ══════════ 해결 ══════════ -->
+<section id="solution" class="tinted">
+  <div class="wrap">
+    <div class="head tight rv">
+      <h2>판단을 대신하지 않고,<br>판단할 거리를 줄입니다</h2>
+      <p>기존 서비스가 “겹치는 칸을 찾는” 데서 멈추는 세 지점을, 완전 자동화 대신 통제권을 남기는 방향으로 다르게 다룹니다.</p>
+    </div>
+    <p class="note note-top rv">화면 위 <b>#1 / #2 / #3</b>, <b>개설자 / 참석자</b> 토글은 실제 UI가 아니라 시나리오 구분 표기입니다. <a href="#scenario">자세히 보기</a></p>
+
+    <article class="feat rv">
+      <div class="feat-txt">
+        <span class="tag">문제 01 · 03 해결</span>
+        <h3>필수와 선택을 나누면,<br>따져볼 조합이 줄어듭니다</h3>
+        <p class="vs-line">겹치는 칸을 찾는 방식은 모든 응답을 같은 무게로 계산합니다. 누가 꼭 있어야 하는지는 사람이 따로 판단해야 합니다.</p>
+        <p>개설자가 참석자를 필수와 선택으로 지정합니다. 후보 시간은 필수 참석자가 모두 가능할 때만 추천되고, 한 명이라도 어려우면 자동으로 빠집니다. 6명 전원이 맞는 시간을 찾기보다 반드시 필요한 사람 기준으로 범위를 좁히는 편이 실질적이라는 판단에서입니다.</p>
+        <ul>
+          <li>전체 조합을 다 따지지 않고 필수 조건으로 먼저 좁혀 조율 시간을 줄입니다</li>
+          <li>선택 참석자는 정보 공유를 위해 초대는 유지하고 가중치만 낮춥니다</li>
+          <li>확정 화면에서 필수 전원이 가능한 후보에 배지와 강조 테두리가 붙습니다</li>
+        </ul>
+        <div class="alt"><em>검토한 대안</em><p>선택 참석자를 아예 배제하는 방식도 검토했지만, 회사 맥락에서는 참석하지 않더라도 정보를 공유받아야 합니다. 초대는 유지하고 가중치만 낮추는 절충안을 택했습니다.</p></div>
+      </div>
+      <div class="feat-art">
+        <div class="phone sm"><div class="screen"><img src="./img/create.webp" alt="새 미팅 만들기 화면. 참석자마다 필수 또는 선택 태그가 붙어 있다."></div></div>
+        <div class="phone sm"><div class="screen"><img src="./img/result.webp" alt="확정 화면. 필수 참석자 전원 가능한 후보에 배지와 파란 테두리가 표시된다."></div></div>
+      </div>
+    </article>
+
+    <article class="feat rv">
+      <div class="feat-txt">
+        <span class="tag">문제 02 해결</span>
+        <h3>누가 남았는지 보이면,<br>기다리는 시간이 짧아집니다</h3>
+        <p class="vs-line">기존 방식에서는 누가 남았는지 알기 어렵고, 재촉은 개설자가 메신저로 따로 해야 합니다.</p>
+        <p>필수와 선택을 분리한 진행률을 실시간으로 보여주고, 대기 중인 참석자에게 앱 안에서 리마인드를 보냅니다. 리마인드의 확인을 누르면 투표 현황으로 바로 연결되어, 반복 알림 없이도 응답까지 이어집니다.</p>
+        <ul>
+          <li>초대 응답 창은 48시간, 남은 시간이 화면 상단에 계속 노출됩니다</li>
+          <li>리마인드 대상은 전체 · 필수만 · 선택만 중에서 고릅니다</li>
+          <li>필수 참석자가 끝내 무응답이면 개설자 승인 아래 선택 참석자로 자격을 바꿉니다</li>
+        </ul>
+        <div class="alt"><em>검토한 대안</em><p>무응답 시 대타를 지정하는 방식도 검토했지만, 대타가 상시 프로필을 등록하지 않았다면 조건 계산에 반영할 수 없습니다. 계산 근거 없는 자동 지정은 신뢰를 잃기 때문에 리마인드 재발송과 개설자 승인 하 전환으로 범위를 좁혔습니다.</p></div>
+      </div>
+      <div class="feat-art">
+        <div class="phone sm"><div class="screen"><img src="./img/state.webp" alt="미팅 현황 화면. 필수 참석자 3/4, 선택 참석자 1/2 진행률과 리마인드 발송 버튼이 있다."></div></div>
+      </div>
+    </article>
+
+    <article class="feat rv">
+      <div class="feat-txt">
+        <span class="tag">문제 04 해결</span>
+        <h3>이전 값을 불러오되, 확인은 사람이 합니다</h3>
+        <p class="vs-line">기존 방식은 회차마다 새 링크, 새 입력입니다. 지난번 조건은 어디에도 남지 않습니다.</p>
+        <p>외근 요일과 선호·회피 시간대를 프로필에 저장해 두고, 매주 확인 모달로 바뀐 부분만 고칩니다. 이전 값을 기본으로 채워두되 확인은 사람이 합니다.</p>
+        <ul>
+          <li>매주 상시 조건 확인 모달로 선호·가능·회피 시간대와 외근 요일을 점검합니다</li>
+          <li>동일 멤버 6명이 정확히 일치하면 지난 세팅을 프리필하고 확인 얼럿을 띄웁니다</li>
+          <li>연차 같은 이번 주만의 예외는 초대 응답 단계에서 따로 입력합니다</li>
+        </ul>
+        <div class="alt"><em>검토한 대안</em><p>확인 절차 없이 지난주 설정을 그대로 재사용하는 방식도 검토했지만, 인터뷰에서 6명 중 5명이 “상황은 항상 달라지니까” 매번 재확인한다고 답해 확인 모달을 남기는 쪽으로 정했습니다.</p></div>
+      </div>
+      <div class="feat-art" style="align-items:flex-end">
+        <div><img class="modalshot" src="./img/weekly.webp" alt="상시 조건 확인 모달. 선호 시간, 가능 시간, 회피 시간, 주요 외근 요일이 요약되어 있다.">
+          <p class="shotcap">매주 뜨는 상시 조건 확인 모달</p></div>
+        <div><div class="phone sm"><div class="screen"><img src="./img/reuse.webp" alt="기존 멤버로 미팅을 다시 만드는 화면. 지난 세팅이 미리 채워져 있다."></div></div>
+          <p class="shotcap">동일 멤버 재사용 시 프리필된 생성 화면</p></div>
+      </div>
+    </article>
+  </div>
+</section>
+<!-- ══════════ 왜 메신저 안인가 ══════════ -->
+<section id="messenger">
+  <div class="wrap">
+    <div class="head rv">
+      <h2>독립 앱이 아니라<br>업무 메신저의 부가 서비스입니다</h2>
+      <p>일정 조율은 이미 메신저 안에서 시작됩니다. m.m은 Slack, 카카오워크 같은 업무 메신저에 연동되어, 채널 안 미팅 카테고리에서 전 과정을 끝냅니다.</p>
+    </div>
+    <div class="why">
+      <div class="why-cols rv">
+        <div class="why-box">
+          <span class="why-mark" aria-hidden="true"></span>
+          <em>검토한 형태</em>
+          <h3>독립 서비스</h3>
+          <p>조율 링크를 만들어 메신저에 붙이고, 응답은 다른 화면에서 받고, 확정 결과를 다시 메신저로 옮겨야 합니다. 도구를 하나 더 쓰기 위해 옮겨 다니는 일이 남습니다.</p>
+          <div class="path"><span>메신저</span><span>외부 링크</span><span>다시 메신저</span><span>캘린더 앱</span></div>
+        </div>
+        <div class="why-box on">
+          <span class="why-mark" aria-hidden="true"></span>
+          <em>선택한 형태</em>
+          <h3>메신저 부가 서비스</h3>
+          <p>이미 팀원과 채널이 있는 곳에서 시작합니다. 메신저 계정을 연동하면 참석자 목록을 새로 만들 필요가 없고, 확정된 일정은 그 메신저의 캘린더 기능으로 바로 들어갑니다.</p>
+          <div class="path"><span>메신저 안에서 전부</span></div>
+        </div>
+      </div>
+      <p class="swipe-hint rv">좌우로 넘겨서 두 형태를 비교해 보세요.</p>
+      <div class="why-art rv">
+        <div class="phone sm"><div class="screen"><img src="./img/main.webp" alt="Slack UI를 기준으로 설계한 m.m 메인 화면. 채널과 팀원 목록 사이에 미팅 현황이 놓여 있다."></div></div>
+        <p class="shotcap">화면은 Slack UI를 기준으로 설계했습니다.<br>채널 · 팀원 구조 사이에 미팅 현황이 들어갑니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ══════════ 사용 흐름 ══════════ -->
+<section id="flow" class="tinted">
+  <div class="wrap">
+    <div class="head rv">
+      <h2>초대부터 확정까지,<br>실제로는 이렇게 씁니다</h2>
+      <p>단계를 누르면 화면이 바뀝니다. 화면 위에 마우스를 올리면 아래쪽까지 스크롤됩니다.</p>
+    </div>
+    <div class="flow">
+      <div class="flow-list rv" role="tablist" aria-label="사용 흐름 단계">
+        <button class="step" role="tab" aria-selected="true" data-key="ob7" data-cap="01 ONBOARDING">
+          <span class="idx">01</span><span class="txt"><strong>메신저 연동으로 시작</strong><span>사내 메신저 계정을 연동해 팀원과 채널을 그대로 가져옵니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="profile" data-cap="02 PROFILE">
+          <span class="idx">02</span><span class="txt"><strong>상시 조건을 한 번 등록</strong><span>외근 요일과 선호·가능·회피 시간대를 저장합니다. 이후 모든 미팅의 계산 기준이 됩니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="main" data-cap="03 MAIN">
+          <span class="idx">03</span><span class="txt"><strong>채널 안에서 현황 확인</strong><span>메신저 채널 화면에 미팅 현황이 펼쳐진 채로 보입니다. 별도 앱을 오가지 않습니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="calendar" data-cap="04 CALENDAR">
+          <span class="idx">04</span><span class="txt"><strong>상태 필터로 내 미팅 정리</strong><span>참석 형태와 미팅 상태로 걸러 보고, 주간과 월간을 오갑니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="create" data-cap="05 CREATE">
+          <span class="idx">05</span><span class="txt"><strong>참석자를 필수와 선택으로 지정</strong><span>마감일은 최소 3일 이후로 강제합니다. 응답 48시간과 투표 처리 시간을 확보하기 위해서입니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="invite" data-cap="06 INVITE">
+          <span class="idx">06</span><span class="txt"><strong>초대 응답은 48시간 안에</strong><span>저장된 상시 조건은 읽기 전용, 이번 주 예외만 새로 입력하도록 분리했습니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="state" data-cap="07 STATE">
+          <span class="idx">07</span><span class="txt"><strong>응답 현황과 리마인드</strong><span>필수와 선택을 나눈 진행률을 보고, 대기 중인 사람에게 초대장을 다시 보냅니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="vote1" data-cap="08 VOTE">
+          <span class="idx">08</span><span class="txt"><strong>후보 3안 투표</strong><span>필수 참석자 전원이 응답하면 후보가 열립니다. 저장된 일정 기준으로 자동 확인된 항목도 표시됩니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="result" data-cap="09 RESULT">
+          <span class="idx">09</span><span class="txt"><strong>구성 확인 후 개설자가 확정</strong><span>필수 전원이 가능한 후보가 배지로 먼저 드러납니다. 개설자는 그중에서 최종 시간을 고릅니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="reschedule" data-cap="10 RESCHEDULE">
+          <span class="idx">10</span><span class="txt"><strong>후보가 0개면 재조율</strong><span>같은 기간 재계산, 기간 확장, 직접 지정 중에서 고릅니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="designation" data-cap="11 DESIGNATION">
+          <span class="idx">11</span><span class="txt"><strong>마지막은 개설자 직접 지정</strong><span>참석자와 날짜 매트릭스에서 가능·회피·불가를 보고 직접 정합니다. 외근 요일만은 끝까지 지킵니다.</span></span></button>
+        <button class="step" role="tab" aria-selected="false" data-key="made" data-cap="12 MADE">
+          <span class="idx">12</span><span class="txt"><strong>확정 결과와 캘린더 연동</strong><span>확정된 시간과 참석자 구성을 요약하고, 연동한 메신저의 캘린더 기능에 등록합니다.</span></span></button>
+        <p class="flow-hint">Figma 프로토타입 23개 화면 중 대표 화면입니다.</p>
+      </div>
+      <div class="flow-art">
+        <div class="phone"><div class="screen"><img id="flowImg" src="./img/ob7.webp" alt="선택한 단계의 화면"></div></div>
+        <p class="flow-cap" id="flowCap">01 ONBOARDING</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ══════════ 시나리오 ══════════ -->
+<section id="scenario">
+  <div class="wrap">
+    <div class="head rv">
+      <h2>화면 위 토글은<br>시나리오 구분 표시입니다</h2>
+      <p>프로토타입 화면 상단의 <b>개설자 / 참석자</b>, <b>#1 / #2 / #3</b> 토글은 실제 앱 UI가 아닙니다.</p>
+    </div>
+
+    <div class="callout rv">
+      <p><b>세 가지 상황을 모두 그렸습니다.</b> 투표 화면뿐 아니라 그 뒤의 결과 화면도 #1 / #2 / #3에 각각 대응합니다. 정상 흐름만 그리면 후보가 사라졌을 때 무엇을 보여줄지가 설계에서 빠지기 때문입니다.</p>
+    </div>
+
+    <div class="cases rv">
+      <div class="ctabs" role="tablist" aria-label="투표 화면 시나리오">
+        <button class="ctab" role="tab" aria-selected="true" data-key="vote1"
+          data-desc="세 후보 전부 투표할 수 있습니다. 제출하면 개설자의 확정 화면으로 넘어갑니다."><b>#1</b>후보 3안 모두 가능</button>
+        <button class="ctab" role="tab" aria-selected="false" data-key="vote2"
+          data-desc="불가를 누르면 실시간으로 반영됩니다. 해당 카드가 비활성화되고 누가 어려운지 이름이 표시됩니다."><b>#2</b>일부 후보 불가</button>
+        <button class="ctab" role="tab" aria-selected="false" data-key="vote3"
+          data-desc="남은 후보가 없습니다. 제출 버튼이 재조율 요청으로 바뀌며 종료 보장 흐름으로 들어갑니다."><b>#3</b>후보 3안 모두 불가</button>
+      </div>
+      <p class="case-desc" id="caseDesc">세 후보 전부 투표할 수 있습니다. 제출하면 개설자의 확정 화면으로 넘어갑니다.</p>
+      <div class="phone sm"><div class="screen"><img id="caseImg" src="./img/vote1.webp" alt="선택한 상황의 투표 화면"></div></div>
+    </div>
+
+    <div class="roles">
+      <div class="roles-txt rv">
+        <h3>역할에 따라 같은 화면이 다르게 보입니다</h3>
+        <p>개설자와 참석자는 같은 응답 현황을 보지만, 할 수 있는 일이 다릅니다. 리마인드 발송처럼 조율을 움직이는 액션은 개설자에게만 열려 있습니다.</p>
+      </div>
+      <div class="roles-art rv">
+        <div class="case">
+          <span class="case-badge">개설자</span>
+          <div class="phone xs"><div class="screen"><img src="./img/state.webp" alt="개설자 시점의 응답 현황 화면. 하단에 리마인드 발송 영역이 있다."></div></div>
+          <p class="shotcap">진행률 확인 + 리마인드 발송</p>
+        </div>
+        <div class="case">
+          <span class="case-badge">참석자</span>
+          <div class="phone xs"><div class="screen"><img src="./img/state2.webp" alt="참석자 시점의 응답 현황 화면. 진행률만 보이고 발송 영역이 없다."></div></div>
+          <p class="shotcap">진행률 확인만 가능</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ══════════ 종료 보장 ══════════ -->
+<section id="safety" class="tinted">
+  <div class="wrap">
+    <div class="head rv">
+      <h2>조율에 실패해도<br>반드시 끝납니다</h2>
+      <p>알고리즘에 맡기면 종료 조건이 없어집니다. 부담이 적은 방법부터 강제적인 방법 순서로, 네 번째에서 반드시 끝나게 했습니다.</p>
+    </div>
+    <div class="chain">
+      <div class="link rv"><b>1</b><h3>같은 기간 재계산</h3><p>가장 부담이 적은 방법입니다. 마감은 그대로 두고 회피 시간대까지 포함해 다시 계산하며, 화면에 그 사실을 명시합니다.</p></div>
+      <div class="link rv"><b>2</b><h3>기간 확장 (1회 한정)</h3><p>마감을 3일 연장합니다. 다만 늘어난 기간에 새로 생긴 후보가 특정 참석자에게는 맞지 않을 수 있어, 다음 단계인 이의 접수로 이어집니다.</p></div>
+      <div class="link rv"><b>3</b><h3>이의 접수</h3><p>확장된 기간의 후보가 맞지 않는 참석자는 사유를 들어 이의를 제기합니다. 일반 확장은 24시간, 강제 확장은 2시간 안에 받습니다.</p></div>
+      <div class="link last rv"><b>4</b><h3>개설자 직접 지정<span class="endtag">여기서 종료</span></h3><p>위 세 단계로도 해결되지 않으면 자동 조율을 완전히 멈춥니다. 외근 요일만 지킨 채 개설자가 시간을 지정하고, 투표 없이 즉시 확정합니다. 가장 부담이 크지만 확실하게 끝나는 방법입니다.</p></div>
+    </div>
+    <div class="tradeoff rv">
+      <div>
+        <h3><span class="steptag">3단계</span>여기서 감수한 트레이드오프</h3>
+        <p>필수 참석자의 이의가 개설자 승인 없이 방치되면, 해당 참석자는 선택 참석자로 강등된 뒤 진행됩니다.</p>
+        <p>필수 참석자를 보호하려던 원래 취지와 상충합니다. 그럼에도 이 규칙을 넣은 이유는, 개설자의 무응답이 조율 전체를 무한정 붙잡아 두는 상황을 막을 다른 방법을 찾지 못했기 때문입니다. 종료 보장을 위해 의도적으로 감수한 손해입니다.</p>
+      </div>
+      <img class="modalshot" style="max-width:280px" src="./img/appeal.webp" alt="이의 제기 모달. 사유 선택지 세 가지가 제시된다.">
+    </div>
+  </div>
+</section>
+<!-- ══════════ 상태 모델 ══════════ -->
+<section id="state">
+  <div class="wrap">
+    <div class="head rv">
+      <h2>미팅 상태는 다섯 단계</h2>
+      <p>상위 필터 세 개 아래로 하위 상태를 두어, 캘린더와 목록에서 같은 기준으로 걸러 볼 수 있게 했습니다.</p>
+    </div>
+    <div class="tablewrap rv">
+      <table>
+        <thead><tr><th>상위 필터</th><th>하위 상태</th><th>전환 트리거</th></tr></thead>
+        <tbody>
+          <tr><td>진행</td><td>대기</td><td>초대 발송부터 응답 마감(48시간)까지</td></tr>
+          <tr><td>진행</td><td>투표중</td><td>필수 참석자 전원 응답 완료부터 투표 마감까지</td></tr>
+          <tr><td>진행</td><td>확정대기</td><td>투표 종료부터 개설자가 확정을 누르기 전까지</td></tr>
+          <tr><td>예정</td><td>확정됨</td><td>개설자 확정부터 회의 시작 전까지</td></tr>
+          <tr><td>완료</td><td>종료</td><td>회의 종료 시각 경과. 유일한 시스템 자동 판정</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+<!-- ══════════ 디자인 시스템 ══════════ -->
+<section id="design" class="tinted">
+  <div class="wrap">
+    <div class="head rv">
+      <h2>디자인 시스템</h2>
+      <p>23개 화면이 한 서비스로 읽히도록 색, 서체, 형태의 사용 범위를 먼저 정하고 시작했습니다.</p>
+    </div>
+    <div class="ds">
+      <div class="ds-cell ds-logo rv">
+        <svg viewBox="0 0 218 198" aria-label="m.m 로고"><path d="M58 58h22v41s-4.83-7.1-11-7.1S58 99 58 99V58Z" fill="#605C6E"/><path d="M138 58h22v41s-4.83-7.1-11-7.1-11 7.1-11 7.1V58Z" fill="#605C6E"/><path d="M59.04 167.88a29.52 29.52 0 1 1-59.04 0V94.08c0-24.46 19.83-44.28 44.28-44.28h3.7c7.92 0 15.11 3.13 20.42 8.21-.88 1.31-1.74 2.7-2.55 4.09-5.02 8.65-6.81 18.68-6.81 28.68v77.1Z" fill="#0C4BAC"/><path d="M158.95 167.88a29.52 29.52 0 1 0 59.04 0V94.08c0-24.46-19.83-44.28-44.28-44.28h-3.69c-7.93 0-15.12 3.13-20.42 8.21.87 1.31 1.73 2.7 2.54 4.09 5.02 8.65 6.81 18.68 6.81 28.68v77.1Z" fill="#4D02AA"/><path d="M149.58 58.02c-5.26 0-8.64 11.28-10.16 17.77-.68 2.96-.91 5.99-.91 9.03v83.07a29.52 29.52 0 1 1-59.04 0V84.82c0-3.04-.23-6.07-.92-9.03-1.51-6.49-4.9-17.77-10.16-17.77h.02c.27-4.55 18.33-8.22 40.58-8.22s40.31 3.67 40.58 8.22h.01Z" fill="#2C29AB"/><circle cx="68.4" cy="18.45" r="18.45" fill="#1F40AD"/><circle cx="149.58" cy="18.45" r="18.45" fill="#3D1CAC"/></svg>
+        <div>
+          <h3>로고</h3>
+          <p>두 사람이 마주 앉아 회의하는 모습입니다. 위쪽 원 두 개가 머리, 아래 기둥이 몸이 되어 소문자 m을 만듭니다. 서비스 이름 met? meet!의 첫 글자이면서, 조율의 끝이 결국 마주 앉는 일이라는 점을 담았습니다.</p>
+        </div>
+      </div>
+
+      <div class="ds-cell ds-color rv">
+        <h3>색상</h3>
+        <div class="swatches">
+          <div class="sw"><i style="background:#014BAA"></i><b>Main</b><span>#014BAA</span></div>
+          <div class="sw"><i style="background:linear-gradient(135deg,#5001AA,#014BAA)"></i><b>Gradient</b><span>#5001AA → #014BAA</span></div>
+          <div class="sw"><i style="background:#101010"></i><b>Black</b><span>#101010</span></div>
+          <div class="sw"><i style="background:#353535"></i><b>Gray</b><span>#353535</span></div>
+          <div class="sw"><i style="background:#EBEBEB"></i><b>Light Gray</b><span>#EBEBEB</span></div>
+          <div class="sw"><i style="background:#FCFCFC"></i><b>Background</b><span>#FCFCFC</span></div>
+        </div>
+        <p class="note" style="margin-top:20px">메인 컬러는 확정·제출처럼 되돌리기 어려운 액션에만 씁니다. 그라데이션은 브랜드가 드러나는 자리(로고, 온보딩, 주요 CTA)로 한정해 강조가 흔해지지 않게 했습니다.</p>
+      </div>
+
+      <div class="ds-cell ds-type rv">
+        <h3>타이포그래피</h3>
+        <div class="typerow"><b style="font-size:1.75rem;font-weight:700;letter-spacing:-.04em">Pretendard</b><span>Display · 700</span></div>
+        <div class="typerow"><b style="font-size:1.125rem;font-weight:700;letter-spacing:-.03em">미팅 현황</b><span>Heading · 700</span></div>
+        <div class="typerow"><b style="font-size:.9375rem;font-weight:500">필수 참석자가 모두 가능한 시간</b><span>Body · 500</span></div>
+        <div class="typerow"><b style="font-size:.8125rem;font-weight:500;color:var(--sub)">최소 3일 이후로 설정해주세요</b><span>Caption · 500</span></div>
+        <p class="note" style="margin-top:18px">한글과 숫자가 한 줄에 자주 섞이는 화면이라, 자간이 좁고 숫자 폭이 고른 Pretendard를 썼습니다.</p>
+      </div>
+
+      <div class="ds-cell ds-shape rv">
+        <h3>형태</h3>
+        <div class="shaperow"><i style="width:58px;height:44px;border-radius:16px"></i><b>카드 · 모달</b><span>16px</span></div>
+        <div class="shaperow"><i style="width:72px;height:32px;border-radius:10px"></i><b>버튼 · 입력</b><span>10px</span></div>
+        <div class="shaperow"><i style="width:62px;height:24px;border-radius:999px"></i><b>칩 · 배지 · 토글</b><span>Full</span></div>
+        <p class="note" style="margin-top:18px">라운드는 이 세 단계만 씁니다. 그림자는 실제로 떠 있는 요소(모달, 바텀시트)에만 쓰고, 나머지 위계는 1px 선과 여백으로 만듭니다.</p>
+      </div>
+
+      <div class="ds-cell ds-badge rv">
+        <h3>상태 표시</h3>
+        <div class="badges">
+          <span class="bd wait">대기 중</span>
+          <span class="bd on">응답 완료</span>
+          <span class="bd on">투표중</span>
+          <span class="bd on">확정대기</span>
+          <span class="bd on">필수</span>
+          <span class="bd off">선택</span>
+        </div>
+        <p class="note" style="margin-top:18px">배지 색은 두 가지만 씁니다. 지금 움직이고 있는 것은 브랜드 블루, 기다리는 중이거나 우선순위가 낮은 것은 그레이입니다. 화면이 바뀌어도 같은 규칙으로 읽힙니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ══════════ 프로젝트 ══════════ -->
+<section id="about">
+  <div class="wrap">
+    <div class="about">
+      <div class="about-main rv">
+        <div class="head" style="margin-bottom:30px">
+          <h2>프로젝트 정보</h2>
+          <p>업무 메신저 부가 서비스로 설계한 다인원 회의 조율 앱. 리서치부터 프로토타입까지 혼자 진행했습니다.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>2개월</b><span>작업 기간</span></div>
+          <div class="stat"><b>1인</b><span>리서치 · UX · UI · 프로토타입</span></div>
+          <div class="stat"><b>23개</b><span>Figma 화면</span></div>
+          <div class="stat"><b>6명</b><span>인터뷰 참여자</span></div>
+        </div>
+        <div class="contact">
+          <a class="btn btn-fill" href="mailto:mary3103@naver.com">mary3103@naver.com</a>
+          <a class="btn btn-line" href="https://www.figma.com/proto/XfxpuROsTDVo68HQIm1VpC/mm-%ED%94%84%EB%A1%9C%ED%86%A0?node-id=2011-4060&starting-point-node-id=2011%3A4060&scaling=min-zoom&content-scaling=fixed" target="_blank" rel="noopener">프로토타입 보기</a>
+        </div>
+      </div>
+      <div class="about-side rv">
+        <h3>알고 있는 한계와 다음 단계</h3>
+        <ul>
+          <li>인터뷰 6명은 디자이너 중심이었고, 사례도 업무 회의보다 사적 모임이 많았습니다. 6명 중 4명은 회의를 여는 쪽보다 참석하는 쪽 경험이 많아, 개설자 시점의 판단은 검증이 필요한 가정으로 남아 있습니다.</li>
+          <li>프로토타입 사용성 검증을 진행하지 못했습니다. 다음 단계는 회의를 직접 개설하는 사람들에게 필수·선택 지정과 재조율 흐름을 테스트하는 것입니다.</li>
+          <li>수동 지정 매트릭스는 셀의 사유를 날짜를 고른 뒤에만 볼 수 있습니다. 그리드 전체를 보면서 바로 파악하는 구조로 바꿀 여지가 있습니다.</li>
+          <li>메신저 계정을 여러 개 연동한 경우, 확정 일정을 어느 캘린더에 넣을지 고르는 단계가 필요합니다.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>m.m (met? meet!) · UI/UX 케이스 스터디</p>
+    <a href="mailto:mary3103@naver.com">mary3103@naver.com</a>
+  </div>
+</footer>
+
+<script>
+/* 화면 이미지는 모두 img 폴더에 있습니다 */
+var IMG_DIR = "./img/";
+
+/* ===== 모션 최소화 설정이면 온보딩 애니메이션을 정지 화면으로 ===== */
+if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  document.getElementById("obImg").src = IMG_DIR + "ob7.webp";
+}
+
+/* ===== 헤더 보더 ===== */
+var hd = document.getElementById("hd");
+new IntersectionObserver(function(e){ hd.classList.toggle("on", !e[0].isIntersecting); },
+  { rootMargin: "-68px 0px 0px 0px" }).observe(document.getElementById("top"));
+
+/* ===== 스크롤 등장 ===== */
+var rvObs = new IntersectionObserver(function(list){
+  list.forEach(function(en){
+    if (en.isIntersecting){ en.target.classList.add("in"); rvObs.unobserve(en.target); }
+  });
+}, { threshold: .12, rootMargin: "0px 0px -50px 0px" });
+document.querySelectorAll(".rv").forEach(function(el, i){
+  el.style.transitionDelay = (i % 4) * 70 + "ms";
+  rvObs.observe(el);
+});
+
+/* ===== 사용 흐름 : 단계 클릭 ===== */
+var steps = document.querySelectorAll(".step"),
+    fImg  = document.getElementById("flowImg"),
+    fCap  = document.getElementById("flowCap");
+
+steps.forEach(function(btn){
+  btn.addEventListener("click", function(){
+    steps.forEach(function(b){ b.setAttribute("aria-selected", "false"); });
+    btn.setAttribute("aria-selected", "true");
+    fImg.style.opacity = "0";
+    setTimeout(function(){
+      fImg.src = IMG_DIR + btn.dataset.key + ".webp";
+      fImg.style.transform = "none";
+      fCap.textContent = btn.dataset.cap;
+      fImg.style.opacity = "1";
+    }, 170);
+  });
+});
+
+/* ===== 시나리오 : 상황 탭 전환 ===== */
+var ctabs = document.querySelectorAll(".ctab"),
+    cImg  = document.getElementById("caseImg"),
+    cDesc = document.getElementById("caseDesc");
+
+ctabs.forEach(function(btn){
+  btn.addEventListener("click", function(){
+    ctabs.forEach(function(t){ t.setAttribute("aria-selected", "false"); });
+    btn.setAttribute("aria-selected", "true");
+    cImg.style.opacity = cDesc.style.opacity = "0";
+    setTimeout(function(){
+      cImg.src = IMG_DIR + btn.dataset.key + ".webp";
+      cDesc.textContent = btn.dataset.desc;
+      cImg.style.opacity = cDesc.style.opacity = "1";
+    }, 170);
+  });
+});
+
+/* ===== 폰 화면 : 호버 시 아래까지 스크롤 ===== */
+document.querySelectorAll(".screen").forEach(function(sc){
+  var img = sc.querySelector("img");
+  sc.addEventListener("mouseenter", function(){
+    var gap = sc.clientHeight - img.clientHeight;
+    if (gap < -8) img.style.transform = "translateY(" + gap + "px)";
+  });
+  sc.addEventListener("mouseleave", function(){ img.style.transform = "none"; });
+});
+</script>
+
+</body>
+</html>
