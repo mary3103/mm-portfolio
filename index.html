@@ -165,7 +165,12 @@ nav a:hover::after{transform:scaleX(1)}
   border-top:1.5px solid #C4C4C4;border-right:1.5px solid #C4C4C4;transform:translateY(-50%) rotate(45deg)}
 .why-box.on .path span{background:rgba(1,75,170,.09);color:var(--blue);font-weight:600}
 .why-art{flex:0 1 268px;min-width:230px;display:flex;flex-direction:column;align-items:center}
-.swipe-hint{display:none;flex:1 1 100%;margin-top:14px;font-size:.8125rem;color:var(--sub)}
+
+/* ---------- 좌우 슬라이드 : 좁은 화면에서 한 장씩 넘겨 본다 ---------- */
+.dots{display:none;flex:0 0 100%;justify-content:center;gap:8px;margin-top:18px}
+.dots button{width:7px;height:7px;padding:0;border:0;border-radius:var(--r-pill);
+  background:#C6CDD8;cursor:pointer;transition:width .3s var(--ease),background .3s}
+.dots button[aria-selected="true"]{width:22px;background:var(--grad)}
 
 /* ---------- 변수 ---------- */
 .scope{display:flex;gap:20px;flex-wrap:wrap}
@@ -210,6 +215,8 @@ nav a:hover::after{transform:scaleX(1)}
   letter-spacing:.08em;color:var(--blue);margin-bottom:9px}
 .alt p{margin:0;font-size:.9063rem;color:var(--gray);line-height:1.65;max-width:none}
 .feat-art{flex:1.15 1 340px;display:flex;justify-content:center;align-items:center;gap:20px;flex-wrap:wrap}
+.feat-art.bottom{align-items:flex-end}
+.feat-art .slide{display:flex;flex-direction:column;align-items:center;min-width:0}
 
 /* ---------- 사용 흐름 ---------- */
 .flow{display:flex;gap:clamp(28px,4vw,64px);align-items:flex-start;flex-wrap:wrap}
@@ -260,6 +267,13 @@ nav a:hover::after{transform:scaleX(1)}
 .roles-txt h3{font-size:1.25rem;font-weight:700;letter-spacing:-.03em}
 .roles-txt p{margin-top:12px;font-size:.9688rem;color:var(--gray);line-height:1.7}
 .roles-art{flex:1 1 400px;display:flex;gap:clamp(18px,3vw,36px);justify-content:center;flex-wrap:wrap}
+/* 좁은 화면에서는 두 역할을 탭으로 바꿔 본다 (#1 / #2 / #3 탭과 같은 방식) */
+.rtabs{display:none;flex:1 1 100%;justify-content:center;gap:10px;margin-bottom:4px}
+.rtab{padding:10px 22px;border-radius:var(--r-pill);border:1px solid var(--line);
+  background:var(--card);font:inherit;font-size:.9063rem;font-weight:600;color:var(--gray);
+  cursor:pointer;transition:background .3s var(--ease),border-color .3s,color .3s,transform .3s var(--ease)}
+.rtab:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-2px)}
+.rtab[aria-selected="true"]{background:var(--grad);border-color:transparent;color:#fff;transform:none}
 
 /* ---------- 종료 보장 ---------- */
 /* 순서가 있는 단계라 카드 대신 이어지는 흐름으로 */
@@ -390,7 +404,15 @@ footer a:hover{color:var(--blue)}
   .feat:nth-of-type(even){flex-direction:row}
   .flow-list{flex:1 1 300px}
   .flow-art{flex:0 0 206px;min-width:0;top:92px}
-  .flow-art .phone{max-width:206px}
+  /* 목업이 작아지는 만큼 테두리 · 라운드 · 카메라홀도 같은 비율로 줄인다 */
+  .flow-art .phone{max-width:206px;border-width:6px;border-radius:30px}
+  .flow-art .phone::before{top:6px;width:62px;height:14px}
+  .flow-art .screen{border-radius:24px}
+  /* 역할 비교 : 탭으로 한 화면씩 */
+  .rtabs{display:flex}
+  .roles-art .case-badge{display:none}
+  .roles-art .case{display:none;flex:1 1 100%}
+  .roles-art .case.on{display:flex}
 }
 @media(max-width:640px){
   .wrap{padding-inline:20px}
@@ -404,7 +426,18 @@ footer a:hover{color:var(--blue)}
   .flow-art{order:-1;flex:none;width:100%;position:sticky;top:62px;z-index:20;
     background:var(--tint);padding-block:14px;margin-bottom:20px;
     box-shadow:0 10px 16px -12px rgba(16,16,16,.35)}
-  .flow-art .phone{max-width:158px}
+  .flow-art .phone{max-width:158px;border-width:5px;border-radius:23px}
+  .flow-art .phone::before{top:5px;width:47px;height:11px}
+  .flow-art .screen{border-radius:18px}
+  /* 여러 장을 나란히 두던 곳은 한 장씩 넘겨 보게 한다 */
+  .swipe{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;scroll-snap-type:x mandatory;
+    scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .swipe::-webkit-scrollbar{display:none}
+  .swipe,.swipe.bottom{align-items:center}
+  .swipe .modalshot{max-width:300px}
+  .swipe>*{flex:0 0 100%;min-width:0;scroll-snap-align:center}
+  .dots{display:flex}
+  .why-box p{min-height:0}
   /* 상태 표 : 가로 스크롤 대신 카드로 전환 */
   thead{display:none}
   tbody tr{display:block;padding:18px 20px}
@@ -415,16 +448,6 @@ footer a:hover{color:var(--blue)}
   tbody td:nth-child(2){font-size:1.0625rem;margin-top:2px}
   tbody td:last-child{margin-top:7px;font-size:.9063rem}
   .ds-cell{padding:26px 22px}
-}
-
-/* 좁은 화면에서는 두 비교 카드를 좌우 스와이프로 */
-@media(max-width:545px){
-  .why-cols{flex-wrap:nowrap;overflow-x:auto;scroll-snap-type:x mandatory;
-    scrollbar-width:none;-webkit-overflow-scrolling:touch}
-  .why-cols::-webkit-scrollbar{display:none}
-  .why-box{flex:0 0 86%;min-width:0;scroll-snap-align:center}
-  .why-box p{min-height:0}
-  .swipe-hint{display:block}
 }
 
 /* ---------- 모션 최소화 ---------- */
@@ -541,9 +564,9 @@ footer a:hover{color:var(--blue)}
         </ul>
         <div class="alt"><em>검토한 대안</em><p>선택 참석자를 아예 배제하는 방식도 검토했지만, 회사 맥락에서는 참석하지 않더라도 정보를 공유받아야 합니다. 초대는 유지하고 가중치만 낮추는 절충안을 택했습니다.</p></div>
       </div>
-      <div class="feat-art">
-        <div class="phone sm"><div class="screen"><img src="./img/create.webp" alt="새 미팅 만들기 화면. 참석자마다 필수 또는 선택 태그가 붙어 있다."></div></div>
-        <div class="phone sm"><div class="screen"><img src="./img/result.webp" alt="확정 화면. 필수 참석자 전원 가능한 후보에 배지와 파란 테두리가 표시된다."></div></div>
+      <div class="feat-art swipe">
+        <div class="slide"><div class="phone sm"><div class="screen"><img src="./img/create.webp" alt="새 미팅 만들기 화면. 참석자마다 필수 또는 선택 태그가 붙어 있다."></div></div></div>
+        <div class="slide"><div class="phone sm"><div class="screen"><img src="./img/result.webp" alt="확정 화면. 필수 참석자 전원 가능한 후보에 배지와 파란 테두리가 표시된다."></div></div></div>
       </div>
     </article>
 
@@ -578,10 +601,10 @@ footer a:hover{color:var(--blue)}
         </ul>
         <div class="alt"><em>검토한 대안</em><p>확인 절차 없이 지난주 설정을 그대로 재사용하는 방식도 검토했지만, 인터뷰에서 6명 중 5명이 “상황은 항상 달라지니까” 매번 재확인한다고 답해 확인 모달을 남기는 쪽으로 정했습니다.</p></div>
       </div>
-      <div class="feat-art" style="align-items:flex-end">
-        <div><img class="modalshot" src="./img/weekly.webp" alt="상시 조건 확인 모달. 선호 시간, 가능 시간, 회피 시간, 주요 외근 요일이 요약되어 있다.">
+      <div class="feat-art swipe bottom">
+        <div class="slide"><img class="modalshot" src="./img/weekly.webp" alt="상시 조건 확인 모달. 선호 시간, 가능 시간, 회피 시간, 주요 외근 요일이 요약되어 있다.">
           <p class="shotcap">매주 뜨는 상시 조건 확인 모달</p></div>
-        <div><div class="phone sm"><div class="screen"><img src="./img/reuse.webp" alt="기존 멤버로 미팅을 다시 만드는 화면. 지난 세팅이 미리 채워져 있다."></div></div>
+        <div class="slide"><div class="phone sm"><div class="screen"><img src="./img/reuse.webp" alt="기존 멤버로 미팅을 다시 만드는 화면. 지난 세팅이 미리 채워져 있다."></div></div>
           <p class="shotcap">동일 멤버 재사용 시 프리필된 생성 화면</p></div>
       </div>
     </article>
@@ -595,7 +618,7 @@ footer a:hover{color:var(--blue)}
       <p>일정 조율은 이미 메신저 안에서 시작됩니다. m.m은 Slack, 카카오워크 같은 업무 메신저에 연동되어, 채널 안 미팅 카테고리에서 전 과정을 끝냅니다.</p>
     </div>
     <div class="why">
-      <div class="why-cols rv">
+      <div class="why-cols swipe rv">
         <div class="why-box">
           <span class="why-mark" aria-hidden="true"></span>
           <em>검토한 형태</em>
@@ -611,7 +634,6 @@ footer a:hover{color:var(--blue)}
           <div class="path"><span>메신저 안에서 전부</span></div>
         </div>
       </div>
-      <p class="swipe-hint rv">좌우로 넘겨서 두 형태를 비교해 보세요.</p>
       <div class="why-art rv">
         <div class="phone sm"><div class="screen"><img src="./img/main.webp" alt="Slack UI를 기준으로 설계한 m.m 메인 화면. 채널과 팀원 목록 사이에 미팅 현황이 놓여 있다."></div></div>
         <p class="shotcap">화면은 Slack UI를 기준으로 설계했습니다.<br>채널 · 팀원 구조 사이에 미팅 현황이 들어갑니다.</p>
@@ -692,12 +714,16 @@ footer a:hover{color:var(--blue)}
         <p>개설자와 참석자는 같은 응답 현황을 보지만, 할 수 있는 일이 다릅니다. 리마인드 발송처럼 조율을 움직이는 액션은 개설자에게만 열려 있습니다.</p>
       </div>
       <div class="roles-art rv">
-        <div class="case">
+        <div class="rtabs" role="tablist" aria-label="역할별 화면">
+          <button class="rtab" type="button" role="tab" aria-selected="true" data-role="host">개설자</button>
+          <button class="rtab" type="button" role="tab" aria-selected="false" data-role="guest">참석자</button>
+        </div>
+        <div class="case on" data-role="host">
           <span class="case-badge">개설자</span>
           <div class="phone xs"><div class="screen"><img src="./img/state.webp" alt="개설자 시점의 응답 현황 화면. 하단에 리마인드 발송 영역이 있다."></div></div>
           <p class="shotcap">진행률 확인 + 리마인드 발송</p>
         </div>
-        <div class="case">
+        <div class="case" data-role="guest">
           <span class="case-badge">참석자</span>
           <div class="phone xs"><div class="screen"><img src="./img/state2.webp" alt="참석자 시점의 응답 현황 화면. 진행률만 보이고 발송 영역이 없다."></div></div>
           <p class="shotcap">진행률 확인만 가능</p>
@@ -855,11 +881,6 @@ footer a:hover{color:var(--blue)}
 /* 화면 이미지는 모두 img 폴더에 있습니다 */
 var IMG_DIR = "./img/";
 
-/* ===== 모션 최소화 설정이면 온보딩 애니메이션을 정지 화면으로 ===== */
-if (matchMedia("(prefers-reduced-motion: reduce)").matches) {
-  document.getElementById("obImg").src = IMG_DIR + "ob7.webp";
-}
-
 /* ===== 헤더 보더 ===== */
 var hd = document.getElementById("hd");
 new IntersectionObserver(function(e){ hd.classList.toggle("on", !e[0].isIntersecting); },
@@ -911,6 +932,44 @@ ctabs.forEach(function(btn){
       cImg.style.opacity = cDesc.style.opacity = "1";
     }, 170);
   });
+});
+
+/* ===== 역할 비교 : 좁은 화면에서 탭 전환 ===== */
+var rtabs = document.querySelectorAll(".rtab"),
+    rcases = document.querySelectorAll(".roles-art .case");
+
+rtabs.forEach(function(btn){
+  btn.addEventListener("click", function(){
+    rtabs.forEach(function(t){ t.setAttribute("aria-selected", "false"); });
+    btn.setAttribute("aria-selected", "true");
+    rcases.forEach(function(c){ c.classList.toggle("on", c.dataset.role === btn.dataset.role); });
+  });
+});
+
+/* ===== 좌우 슬라이드 : 점 네비게이터 ===== */
+document.querySelectorAll(".swipe").forEach(function(track){
+  var slides = [].slice.call(track.children),
+      dots = document.createElement("div");
+  dots.className = "dots";
+
+  slides.forEach(function(slide, i){
+    var dot = document.createElement("button");
+    dot.type = "button";
+    dot.setAttribute("aria-label", (i + 1) + "번째 화면 보기");
+    dot.setAttribute("aria-selected", i === 0 ? "true" : "false");
+    dot.addEventListener("click", function(){
+      track.scrollTo({ left: slide.offsetLeft - track.offsetLeft, behavior: "smooth" });
+    });
+    dots.appendChild(dot);
+  });
+  track.insertAdjacentElement("afterend", dots);
+
+  track.addEventListener("scroll", function(){
+    var at = Math.round(track.scrollLeft / track.clientWidth);
+    [].forEach.call(dots.children, function(d, j){
+      d.setAttribute("aria-selected", j === at ? "true" : "false");
+    });
+  }, { passive: true });
 });
 
 /* ===== 폰 화면 : 호버 시 아래까지 스크롤 ===== */
