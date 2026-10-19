@@ -224,9 +224,10 @@ nav a:hover::after{transform:scaleX(1)}
 .feat-art.col{flex-direction:column;align-items:stretch;gap:22px}
 .sc-row{display:flex;justify-content:center;align-items:flex-start;gap:22px}
 .sc-row .slide{flex:0 1 230px}
-.scard{position:relative;width:100%;max-width:230px;margin:0;border-radius:22px;background:#FCFCFC;
+.scard{position:relative;width:100%;max-width:230px;margin:0;border-radius:22px;background:#FCFCFC;aspect-ratio:402/874;overflow:hidden;
   box-shadow:0 0 0 1px #E3E3E8,0 24px 48px -28px rgba(20,20,60,.28)}
-.scard img{display:block;width:100%;border-radius:22px}
+.scard .sc-in{position:relative;transition:transform 2.2s var(--ease)}
+.scard img{display:block;width:100%}
 .scard .mk{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--grad);
   color:#fff;font-style:normal;font-size:.6875rem;font-weight:700;display:flex;align-items:center;justify-content:center;
   box-shadow:0 0 0 4px rgba(80,1,170,.16)}
@@ -609,7 +610,7 @@ footer a:hover{color:var(--blue)}
 </section>
 <!-- ══════════ 해결 ══════════ -->
 <!-- ══════════ 왜 메신저 안인가 ══════════ -->
-<section id="messenger" class="tinted">
+<section id="messenger">
   <div class="wrap">
     <div class="head rv">
       <h2>독립 앱이 아니라<br>업무 메신저의 부가 서비스입니다</h2>
@@ -639,7 +640,7 @@ footer a:hover{color:var(--blue)}
     </div>
   </div>
 </section>
-<section id="solution">
+<section id="solution" class="tinted">
   <div class="wrap">
     <div class="head tight rv">
       <h2>판단을 대신하지 않고,<br>판단할 거리를 줄입니다</h2>
@@ -659,7 +660,7 @@ footer a:hover{color:var(--blue)}
         </ul>
         <div class="alt"><em>검토한 대안</em><p>선택 참석자를 아예 배제하는 방식도 검토했지만, 회사 맥락에서는 참석하지 않더라도 정보를 공유받아야 합니다. 초대는 유지하고 가중치만 낮추는 절충안을 택했습니다.</p></div>
       </div>
-      <div class="feat-art col"><div class="sc-row swipe"><div class="slide"><figure class="scard"><img src="./img/s-create.webp" alt="새 미팅 만들기 화면. 참석자마다 필수 또는 선택 태그가 붙어 있다." loading="lazy"><i class="mk" style="left:0%;top:56.7%">1</i></figure><p class="shotcap">새 미팅 만들기</p></div><div class="slide"><figure class="scard"><img src="./img/s-result.webp" alt="미팅 현황 화면. 후보마다 필수·선택 참석자가 나뉘어 표시되고, 필수 참석자가 불가한 후보는 회색으로 비활성화된다." loading="lazy"><i class="mk" style="left:100%;top:36.2%">2</i><i class="mk" style="left:100%;top:62.7%">3</i><i class="mk" style="left:100%;top:89.8%">4</i></figure><p class="shotcap">미팅 현황</p></div></div><ol class="callouts"><li><i>1</i><div><b>필수 · 선택 지정</b><span>선택 참석자는 초대는 유지하고 가중치만 낮춥니다</span></div></li><li><i>2</i><div><b>후보마다 필수 · 선택 구분</b><span>같은 후보 안에서도 필수와 선택 참석자를 나눠 보여줍니다</span></div></li><li><i>3</i><div><b>선택이 빠져도 후보 유지</b><span>선택 참석자가 불가해도 필수 전원이 가능하면 남습니다</span></div></li><li><i>4</i><div><b>선택할 수 없는 시간</b><span>필수 참석자가 한 명이라도 불참하면 그 시간은 고를 수 없습니다</span></div></li></ol></div>
+      <div class="feat-art col"><div class="sc-row swipe"><div class="slide"><figure class="scard"><div class="sc-in"><img src="./img/s-create.webp" alt="새 미팅 만들기 화면. 참석자마다 필수 또는 선택 태그가 붙어 있다." loading="lazy"><i class="mk" style="left:8%;top:56.7%">1</i></div></figure><p class="shotcap">새 미팅 만들기</p></div><div class="slide"><figure class="scard"><div class="sc-in"><img src="./img/s-result.webp" alt="미팅 현황 화면. 후보마다 필수·선택 참석자가 나뉘어 표시되고, 필수 참석자가 불가한 후보는 회색으로 비활성화된다." loading="lazy"><i class="mk" style="left:92%;top:36.2%">2</i><i class="mk" style="left:92%;top:62.7%">3</i><i class="mk" style="left:92%;top:89.8%">4</i></div></figure><p class="shotcap">미팅 현황</p></div></div><ol class="callouts"><li><i>1</i><div><b>필수 · 선택 지정</b><span>선택 참석자는 초대는 유지하고 가중치만 낮춥니다</span></div></li><li><i>2</i><div><b>후보마다 필수 · 선택 구분</b><span>같은 후보 안에서도 필수와 선택 참석자를 나눠 보여줍니다</span></div></li><li><i>3</i><div><b>선택이 빠져도 후보 유지</b><span>선택 참석자가 불가해도 필수 전원이 가능하면 남습니다</span></div></li><li><i>4</i><div><b>선택할 수 없는 시간</b><span>필수 참석자가 한 명이라도 불참하면 그 시간은 고를 수 없습니다</span></div></li></ol></div>
     </article>
 
     <article class="feat rv">
@@ -675,7 +676,7 @@ footer a:hover{color:var(--blue)}
         </ul>
         <div class="alt"><em>검토한 대안</em><p>무응답 시 대타를 지정하는 방식도 검토했지만, 대타가 상시 프로필을 등록하지 않았다면 조건 계산에 반영할 수 없습니다. 계산 근거 없는 자동 지정은 신뢰를 잃기 때문에 리마인드 재발송과 개설자 승인 하 전환으로 범위를 좁혔습니다.</p></div>
       </div>
-      <div class="feat-art col"><div class="sc-row swipe"><div class="slide"><figure class="scard"><img src="./img/s-state.webp" alt="개설자의 미팅 현황 화면. 필수 3/4, 선택 1/2 진행률과 리마인드 대상 선택이 있다." loading="lazy"><i class="mk" style="left:0%;top:30.3%">1</i><i class="mk" style="left:0%;top:78.9%">2</i></figure><p class="shotcap">개설자 화면</p></div><div class="slide"><figure class="scard"><img src="./img/s-state2.webp" alt="참석자의 미팅 현황 화면. 진행률만 보이고 리마인드 영역이 없다." loading="lazy"><i class="mk" style="left:100%;top:35.5%">3</i><i class="mk" style="left:100%;top:70.5%">4</i></figure><p class="shotcap">참석자 화면</p></div></div><ol class="callouts"><li><i>1</i><div><b>필수 · 선택 진행률</b><span>필수와 선택 응답률을 따로 보여줍니다</span></div></li><li><i>2</i><div><b>리마인드 대상 선택</b><span>대기 중인 참석자 중 필수만 · 선택만 골라 보냅니다</span></div></li><li><i>3</i><div><b>대기 중 표시</b><span>누가 아직 응답하지 않았는지 모두에게 보입니다</span></div></li><li><i>4</i><div><b>개설자만 리마인드</b><span>참석자 화면에는 진행률만 보입니다</span></div></li></ol></div>
+      <div class="feat-art col"><div class="sc-row swipe"><div class="slide"><figure class="scard"><div class="sc-in"><img src="./img/s-state.webp" alt="개설자의 미팅 현황 화면. 필수 3/4, 선택 1/2 진행률과 리마인드 대상 선택이 있다." loading="lazy"><i class="mk" style="left:8%;top:30.3%">1</i><i class="mk" style="left:8%;top:78.9%">2</i></div></figure><p class="shotcap">개설자 화면</p></div><div class="slide"><figure class="scard"><div class="sc-in"><img src="./img/s-state2.webp" alt="참석자의 미팅 현황 화면. 진행률만 보이고 리마인드 영역이 없다." loading="lazy"><i class="mk" style="left:92%;top:35.5%">3</i><i class="mk" style="left:92%;top:70.5%">4</i></div></figure><p class="shotcap">참석자 화면</p></div></div><ol class="callouts"><li><i>1</i><div><b>필수 · 선택 진행률</b><span>필수와 선택 응답률을 따로 보여줍니다</span></div></li><li><i>2</i><div><b>리마인드 대상 선택</b><span>대기 중인 참석자 중 필수만 · 선택만 골라 보냅니다</span></div></li><li><i>3</i><div><b>대기 중 표시</b><span>누가 아직 응답하지 않았는지 모두에게 보입니다</span></div></li><li><i>4</i><div><b>개설자만 리마인드</b><span>참석자 화면에는 진행률만 보입니다</span></div></li></ol></div>
     </article>
 
     <article class="feat rv">
@@ -690,7 +691,7 @@ footer a:hover{color:var(--blue)}
         </ul>
         <div class="alt"><em>검토한 대안</em><p>확인 절차 없이 지난주 설정을 그대로 재사용하는 방식도 검토했지만, 인터뷰에서 6명 중 5명이 “상황은 항상 달라지니까” 매번 재확인한다고 답해 확인 모달을 남기는 쪽으로 정했습니다.</p></div>
       </div>
-      <div class="feat-art col"><div class="sc-row swipe"><div class="slide"><figure class="scard"><img src="./img/s-weekly.webp" alt="홈 화면 위에 뜬 상시 조건 확인 모달. 선호·가능·회피 시간과 주요 외근 요일이 요약되어 있다." loading="lazy"><i class="mk" style="left:0%;top:17.9%">1</i><i class="mk" style="left:0%;top:45.7%">2</i></figure><p class="shotcap">홈 알림 → 상시 조건 확인</p></div><div class="slide"><figure class="scard"><img src="./img/s-reuse.webp" alt="기존 멤버로 미팅을 다시 만드는 화면. 이전 미팅과 설정이 동일하다는 안내와 함께 지난 세팅이 채워져 있다." loading="lazy"><i class="hl" style="left:4.8%;top:13.7%;width:90.4%;height:3.4%"></i><i class="mk" style="left:100%;top:15.5%">3</i><i class="mk" style="left:100%;top:55.7%">4</i><i class="mk" style="left:100%;top:87.1%">5</i></figure><p class="shotcap">재사용 프리필</p></div></div><ol class="callouts"><li><i>1</i><div><b>홈 상단 알림</b><span>이번 주 상시 조건 알림을 누르면 확인 모달이 뜹니다</span></div></li><li><i>2</i><div><b>매주 상시 조건 확인</b><span>저장된 선호 · 회피 시간과 외근 요일을 보고 바뀐 것만 수정</span></div></li><li><i>3</i><div><b>이전 설정 감지</b><span>지난 미팅과 설정이 같으면 유지할지 먼저 묻습니다</span></div></li><li><i>4</i><div><b>지난 세팅 프리필</b><span>참석자 6명이 정확히 일치할 때만, 필수 · 선택 지정까지 미리 채워집니다</span></div></li><li><i>5</i><div><b>확인 후 시작</b><span>바뀐 게 없으면 그대로 시작합니다</span></div></li></ol></div>
+      <div class="feat-art col"><div class="sc-row swipe"><div class="slide"><figure class="scard"><div class="sc-in"><img src="./img/s-weekly.webp" alt="홈 화면 위에 뜬 상시 조건 확인 모달. 선호·가능·회피 시간과 주요 외근 요일이 요약되어 있다." loading="lazy"><i class="mk" style="left:8%;top:17.9%">1</i><i class="mk" style="left:8%;top:45.7%">2</i></div></figure><p class="shotcap">홈 알림 → 상시 조건 확인</p></div><div class="slide"><figure class="scard"><div class="sc-in"><img src="./img/s-reuse.webp" alt="기존 멤버로 미팅을 다시 만드는 화면. 이전 미팅과 설정이 동일하다는 안내와 함께 지난 세팅이 채워져 있다." loading="lazy"><i class="hl" style="left:4.8%;top:13.7%;width:90.4%;height:3.4%"></i><i class="mk" style="left:92%;top:15.5%">3</i><i class="mk" style="left:92%;top:55.7%">4</i><i class="mk" style="left:92%;top:87.1%">5</i></div></figure><p class="shotcap">재사용 프리필</p></div></div><ol class="callouts"><li><i>1</i><div><b>홈 상단 알림</b><span>이번 주 상시 조건 알림을 누르면 확인 모달이 뜹니다</span></div></li><li><i>2</i><div><b>매주 상시 조건 확인</b><span>저장된 선호 · 회피 시간과 외근 요일을 보고 바뀐 것만 수정</span></div></li><li><i>3</i><div><b>이전 설정 감지</b><span>지난 미팅과 설정이 같으면 유지할지 먼저 묻습니다</span></div></li><li><i>4</i><div><b>지난 세팅 프리필</b><span>참석자 6명이 정확히 일치할 때만, 필수 · 선택 지정까지 미리 채워집니다</span></div></li><li><i>5</i><div><b>확인 후 시작</b><span>바뀐 게 없으면 그대로 시작합니다</span></div></li></ol></div>
     </article>
   </div>
 </section>
@@ -1081,6 +1082,15 @@ document.querySelectorAll(".screen").forEach(function(sc){
     if (gap < -8) img.style.transform = "translateY(" + gap + "px)";
   });
   sc.addEventListener("mouseleave", function(){ img.style.transform = "none"; });
+});
+/* ===== 화면 카드 : 호버 시 아래까지 스크롤 (콜아웃 번호도 함께 이동) ===== */
+document.querySelectorAll(".scard").forEach(function(sc){
+  var inner = sc.querySelector(".sc-in");
+  sc.addEventListener("mouseenter", function(){
+    var gap = sc.clientHeight - inner.offsetHeight;
+    if (gap < -8) inner.style.transform = "translateY(" + gap + "px)";
+  });
+  sc.addEventListener("mouseleave", function(){ inner.style.transform = "none"; });
 });
 </script>
 
