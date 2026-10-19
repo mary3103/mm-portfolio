@@ -219,6 +219,35 @@ nav a:hover::after{transform:scaleX(1)}
 .feat-art.bottom{align-items:flex-end}
 .feat-art .slide{display:flex;flex-direction:column;align-items:center;min-width:0}
 
+
+/* 해결 : 화면 카드 + 번호 콜아웃 */
+.feat-art.col{flex-direction:column;align-items:stretch;gap:22px}
+.sc-row{display:flex;justify-content:center;align-items:flex-start;gap:22px}
+.sc-row .slide{flex:0 1 230px}
+.scard{position:relative;width:100%;max-width:230px;margin:0;border-radius:22px;overflow:hidden;background:#FCFCFC;
+  box-shadow:0 0 0 1px #E3E3E8,0 24px 48px -28px rgba(20,20,60,.28)}
+.scard img{display:block;width:100%}
+.scard .mk{position:absolute;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--grad);
+  color:#fff;font-style:normal;font-size:.6875rem;font-weight:700;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 0 0 4px rgba(80,1,170,.16)}
+.scard .hl{position:absolute;border-radius:7px;outline:2px solid #4F01AA;outline-offset:1px;box-shadow:0 0 0 5px rgba(79,1,170,.14)}
+.callouts{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:12px 22px;max-width:500px;margin-inline:auto;width:100%}
+.callouts li{display:flex;gap:10px;align-items:flex-start}
+.callouts i{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--grad);color:#fff;font-style:normal;
+  font-size:.6875rem;font-weight:700;display:flex;align-items:center;justify-content:center;margin-top:2px}
+.callouts b{display:block;font-size:.875rem;font-weight:700;letter-spacing:-.02em}
+.callouts span{display:block;margin-top:2px;font-size:.8125rem;color:var(--sub);line-height:1.55}
+.solves{margin-top:22px;border-top:1px solid var(--line);max-width:46ch}
+.solves .sl{margin:16px 0 4px;font-size:.75rem;font-weight:700;letter-spacing:.04em;color:var(--sub)}
+.solves .sv{display:grid;grid-template-columns:30px 1fr;row-gap:3px;padding:12px 0;border-bottom:1px solid var(--line)}
+.solves .sv span{grid-row:1 / 3;font-size:.8125rem;font-weight:700;color:var(--blue);padding-top:1px}
+.solves .sv p{margin:0;font-size:.9375rem;font-weight:600;color:var(--ink,#101010);max-width:none}
+.solves .sv em{font-style:normal;font-size:.8438rem;color:var(--blue)}
+.tools{margin-top:20px;font-size:.9375rem;color:var(--gray)}
+.tools span{display:inline-block;margin-right:10px;font-size:.75rem;font-weight:700;color:var(--sub)}
+@media(max-width:760px){.callouts{grid-template-columns:1fr}.scard{max-width:260px;margin-inline:auto}}
+@media(max-width:640px){.sc-row .slide{flex:0 0 100%}}
+
 /* ---------- 사용 흐름 ---------- */
 .flow{display:flex;gap:clamp(28px,4vw,64px);align-items:flex-start;flex-wrap:wrap}
 .flow-list{flex:1 1 400px;min-width:280px;display:flex;flex-direction:column}
@@ -579,75 +608,8 @@ footer a:hover{color:var(--blue)}
   </div>
 </section>
 <!-- ══════════ 해결 ══════════ -->
-<section id="solution" class="tinted">
-  <div class="wrap">
-    <div class="head tight rv">
-      <h2>판단을 대신하지 않고,<br>판단할 거리를 줄입니다</h2>
-      <p>기존 서비스가 “겹치는 칸을 찾는” 데서 멈추는 세 지점을, 완전 자동화 대신 통제권을 남기는 방향으로 다르게 다룹니다.</p>
-    </div>
-    <p class="note note-top rv">화면 위 <b>#1 / #2 / #3</b>, <b>개설자 / 참석자</b> 토글은 실제 UI가 아니라 시나리오 구분 표기입니다. <a href="#scenario">자세히 보기</a></p>
-
-    <article class="feat rv">
-      <div class="feat-txt">
-        <span class="tag">문제 01 · 03 해결</span>
-        <h3>필수와 선택을 나누면,<br>따져볼 조합이 줄어듭니다</h3>
-        <p class="vs-line">겹치는 칸을 찾는 방식은 모든 응답을 같은 무게로 계산합니다. 누가 꼭 있어야 하는지는 사람이 따로 판단해야 합니다.</p>
-        <p>개설자가 참석자를 필수와 선택으로 지정합니다. 후보 시간은 필수 참석자가 모두 가능할 때만 추천되고, 한 명이라도 어려우면 자동으로 빠집니다. 6명 전원이 맞는 시간을 찾기보다 반드시 필요한 사람 기준으로 범위를 좁히는 편이 실질적이라는 판단에서입니다.</p>
-        <ul>
-          <li>전체 조합을 다 따지지 않고 필수 조건으로 먼저 좁혀 조율 시간을 줄입니다</li>
-          <li>선택 참석자는 정보 공유를 위해 초대는 유지하고 가중치만 낮춥니다</li>
-          <li>확정 화면에서 필수 전원이 가능한 후보에 배지와 강조 테두리가 붙습니다</li>
-        </ul>
-        <div class="alt"><em>검토한 대안</em><p>선택 참석자를 아예 배제하는 방식도 검토했지만, 회사 맥락에서는 참석하지 않더라도 정보를 공유받아야 합니다. 초대는 유지하고 가중치만 낮추는 절충안을 택했습니다.</p></div>
-      </div>
-      <div class="feat-art swipe">
-        <div class="slide"><div class="phone sm"><div class="screen"><img src="./img/create.webp" alt="새 미팅 만들기 화면. 참석자마다 필수 또는 선택 태그가 붙어 있다."></div></div></div>
-        <div class="slide"><div class="phone sm"><div class="screen"><img src="./img/result.webp" alt="확정 화면. 필수 참석자 전원 가능한 후보에 배지와 파란 테두리가 표시된다."></div></div></div>
-      </div>
-    </article>
-
-    <article class="feat rv">
-      <div class="feat-txt">
-        <span class="tag">문제 02 해결</span>
-        <h3>누가 남았는지 보이면,<br>기다리는 시간이 짧아집니다</h3>
-        <p class="vs-line">기존 방식에서는 누가 남았는지 알기 어렵고, 재촉은 개설자가 메신저로 따로 해야 합니다.</p>
-        <p>필수와 선택을 분리한 진행률을 실시간으로 보여주고, 대기 중인 참석자에게 앱 안에서 리마인드를 보냅니다. 리마인드의 확인을 누르면 투표 현황으로 바로 연결되어, 반복 알림 없이도 응답까지 이어집니다.</p>
-        <ul>
-          <li>초대 응답 창은 48시간, 남은 시간이 화면 상단에 계속 노출됩니다</li>
-          <li>리마인드 대상은 전체 · 필수만 · 선택만 중에서 고릅니다</li>
-          <li>필수 참석자가 끝내 무응답이면 개설자 승인 아래 선택 참석자로 자격을 바꿉니다</li>
-        </ul>
-        <div class="alt"><em>검토한 대안</em><p>무응답 시 대타를 지정하는 방식도 검토했지만, 대타가 상시 프로필을 등록하지 않았다면 조건 계산에 반영할 수 없습니다. 계산 근거 없는 자동 지정은 신뢰를 잃기 때문에 리마인드 재발송과 개설자 승인 하 전환으로 범위를 좁혔습니다.</p></div>
-      </div>
-      <div class="feat-art">
-        <div class="phone sm"><div class="screen"><img src="./img/state.webp" alt="미팅 현황 화면. 필수 참석자 3/4, 선택 참석자 1/2 진행률과 리마인드 발송 버튼이 있다."></div></div>
-      </div>
-    </article>
-
-    <article class="feat rv">
-      <div class="feat-txt">
-        <span class="tag">문제 04 해결</span>
-        <h3>이전 값을 불러오되, 확인은 사람이 합니다</h3>
-        <p class="vs-line">기존 방식은 회차마다 새 링크, 새 입력입니다. 지난번 조건은 어디에도 남지 않습니다.</p>
-        <p>외근 요일과 선호·회피 시간대를 프로필에 저장해 두고, 매주 확인 모달로 바뀐 부분만 고칩니다. 이전 값을 기본으로 채워두되 확인은 사람이 합니다.</p>
-        <ul>
-          <li>매주 상시 조건 확인 모달로 선호·가능·회피 시간대와 외근 요일을 점검합니다</li>
-          <li>동일 멤버 6명이 정확히 일치하면 지난 세팅을 프리필하고 확인 얼럿을 띄웁니다</li>
-          <li>연차 같은 이번 주만의 예외는 초대 응답 단계에서 따로 입력합니다</li>
-        </ul>
-        <div class="alt"><em>검토한 대안</em><p>확인 절차 없이 지난주 설정을 그대로 재사용하는 방식도 검토했지만, 인터뷰에서 6명 중 5명이 “상황은 항상 달라지니까” 매번 재확인한다고 답해 확인 모달을 남기는 쪽으로 정했습니다.</p></div>
-      </div>
-      <div class="feat-art swipe bottom">
-        <div class="slide"><img class="modalshot" src="./img/weekly.webp" alt="상시 조건 확인 모달. 선호 시간, 가능 시간, 회피 시간, 주요 외근 요일이 요약되어 있다.">
-          <p class="shotcap">매주 뜨는 상시 조건 확인 모달</p></div>
-        <div class="slide"><div class="phone sm"><div class="screen"><img src="./img/reuse.webp" alt="기존 멤버로 미팅을 다시 만드는 화면. 지난 세팅이 미리 채워져 있다."></div></div>
-          <p class="shotcap">동일 멤버 재사용 시 프리필된 생성 화면</p></div>
-      </div>
-    </article>
-  </div>
-</section>
 <!-- ══════════ 왜 메신저 안인가 ══════════ -->
-<section id="messenger">
+<section id="messenger" class="tinted">
   <div class="wrap">
     <div class="head rv">
       <h2>독립 앱이 아니라<br>업무 메신저의 부가 서비스입니다</h2>
@@ -675,6 +637,66 @@ footer a:hover{color:var(--blue)}
         <p class="shotcap">화면은 Slack UI를 기준으로 설계했습니다.<br>채널 · 팀원 구조 사이에 미팅 현황이 들어갑니다.</p>
       </div>
     </div>
+  </div>
+</section>
+<section id="solution">
+  <div class="wrap">
+    <div class="head tight rv">
+      <h2>판단을 대신하지 않고,<br>판단할 거리를 줄입니다</h2>
+      <p>기존 서비스가 “겹치는 칸을 찾는” 데서 멈추는 세 지점을, 완전 자동화 대신 통제권을 남기는 방향으로 다르게 다룹니다.</p>
+    </div>
+    <p class="note note-top rv">화면 위 <b>#1 / #2 / #3</b>, <b>개설자 / 참석자</b> 토글은 실제 UI가 아니라 시나리오 구분 표기입니다. <a href="#scenario">자세히 보기</a></p>
+
+    <article class="feat rv">
+      <div class="feat-txt">
+        <span class="tag">문제 01 · 03 해결</span>
+        <h3>필수와 선택을 나누면,<br>따져볼 조합이 줄어듭니다</h3>
+        <p class="vs-line">겹치는 칸을 찾는 방식은 모든 응답을 같은 무게로 계산합니다. 누가 꼭 있어야 하는지는 사람이 따로 판단해야 합니다.</p>
+        <p>개설자가 참석자를 필수와 선택으로 지정합니다. 후보 시간은 필수 참석자가 모두 가능할 때만 추천되고, 한 명이라도 어려우면 그 시간은 선택할 수 없습니다. 6명 전원이 맞는 시간을 찾기보다 반드시 필요한 사람을 우선해 범위를 좁히는 편이 실질적이라는 판단에서입니다.</p>
+        <div class="solves"><p class="sl">이 화면이 해결하는 문제</p><div class="sv"><span>01</span><p>인원이 늘수록 모두 가능한 시간이 사라진다</p><em>→ 필수 참석자를 우선하고, 선택 참석자는 가중치만 낮춰 후보 추천</em></div><div class="sv"><span>03</span><p>참석 조건을 사람이 직접 취합하고 판단한다</p><em>→ AI가 응답을 취합해 후보 3안을 제안</em></div></div>
+        <ul>
+          <li>전체 조합을 다 따지지 않고 필수 조건으로 먼저 좁혀 조율 시간을 줄입니다</li>
+          <li>선택 참석자는 정보 공유를 위해 초대는 유지하고 가중치만 낮춥니다</li>
+          <li>3개 후보 중 추천 후보에 배지와 강조 테두리가 붙습니다</li>
+        </ul>
+        <div class="alt"><em>검토한 대안</em><p>선택 참석자를 아예 배제하는 방식도 검토했지만, 회사 맥락에서는 참석하지 않더라도 정보를 공유받아야 합니다. 초대는 유지하고 가중치만 낮추는 절충안을 택했습니다.</p></div>
+      </div>
+      <div class="feat-art col"><div class="sc-row swipe"><div class="slide"><figure class="scard"><img src="./img/s-create.webp" alt="새 미팅 만들기 화면. 참석자마다 필수 또는 선택 태그가 붙어 있다." loading="lazy"><i class="mk" style="left:4%;top:56.7%">1</i></figure><p class="shotcap">새 미팅 만들기</p></div><div class="slide"><figure class="scard"><img src="./img/s-result.webp" alt="미팅 현황 화면. 후보마다 필수·선택 참석자가 나뉘어 표시되고, 필수 참석자가 불가한 후보는 회색으로 비활성화된다." loading="lazy"><i class="mk" style="left:96%;top:36.2%">2</i><i class="mk" style="left:96%;top:62.7%">3</i><i class="mk" style="left:96%;top:89.8%">4</i></figure><p class="shotcap">미팅 현황</p></div></div><ol class="callouts"><li><i>1</i><div><b>필수 · 선택 지정</b><span>선택 참석자는 초대는 유지하고 가중치만 낮춥니다</span></div></li><li><i>2</i><div><b>후보마다 필수 · 선택 구분</b><span>같은 후보 안에서도 필수와 선택 참석자를 나눠 보여줍니다</span></div></li><li><i>3</i><div><b>선택이 빠져도 후보 유지</b><span>선택 참석자가 불가해도 필수 전원이 가능하면 남습니다</span></div></li><li><i>4</i><div><b>선택할 수 없는 시간</b><span>필수 참석자가 한 명이라도 불참하면 그 시간은 고를 수 없습니다</span></div></li></ol></div>
+    </article>
+
+    <article class="feat rv">
+      <div class="feat-txt">
+        <span class="tag">문제 02 해결</span>
+        <h3>누가 남았는지 보이면,<br>기다리는 시간이 짧아집니다</h3>
+        <p class="vs-line">기존 방식에서는 누가 남았는지 알기 어렵고, 재촉은 개설자가 메신저로 따로 해야 합니다.</p>
+        <p>필수와 선택을 분리한 진행률을 실시간으로 보여주고, 대기 중인 참석자에게 앱 안에서 리마인드를 보냅니다. 리마인드의 확인을 누르면 투표 현황으로 바로 연결되어, 반복 알림 없이도 응답까지 이어집니다.</p>
+        <div class="solves"><p class="sl">이 화면이 해결하는 문제</p><div class="sv"><span>02</span><p>응답을 무작정 기다려야 한다</p><em>→ 남은 사람이 보이고, 개설자가 바로 리마인드</em></div></div>
+        <ul>
+          <li>초대 응답 창은 48시간, 남은 시간이 화면 상단에 계속 노출됩니다</li>
+          <li>리마인드 대상은 전체 · 필수만 · 선택만 중에서 고릅니다</li>
+          <li>필수 참석자가 끝내 무응답이면 개설자 승인 아래 선택 참석자로 자격을 바꿉니다</li>
+        </ul>
+        <div class="alt"><em>검토한 대안</em><p>무응답 시 대타를 지정하는 방식도 검토했지만, 대타가 상시 프로필을 등록하지 않았다면 조건 계산에 반영할 수 없습니다. 계산 근거 없는 자동 지정은 신뢰를 잃기 때문에 리마인드 재발송과 개설자 승인 하 전환으로 범위를 좁혔습니다.</p></div>
+      </div>
+      <div class="feat-art col"><div class="sc-row swipe"><div class="slide"><figure class="scard"><img src="./img/s-state.webp" alt="개설자의 미팅 현황 화면. 필수 3/4, 선택 1/2 진행률과 리마인드 대상 선택이 있다." loading="lazy"><i class="mk" style="left:4%;top:30.3%">1</i><i class="mk" style="left:4%;top:78.9%">2</i></figure><p class="shotcap">개설자 화면</p></div><div class="slide"><figure class="scard"><img src="./img/s-state2.webp" alt="참석자의 미팅 현황 화면. 진행률만 보이고 리마인드 영역이 없다." loading="lazy"><i class="mk" style="left:96%;top:35.5%">3</i><i class="mk" style="left:96%;top:70.5%">4</i></figure><p class="shotcap">참석자 화면</p></div></div><ol class="callouts"><li><i>1</i><div><b>필수 · 선택 진행률</b><span>필수와 선택 응답률을 따로 보여줍니다</span></div></li><li><i>2</i><div><b>리마인드 대상 선택</b><span>대기 중인 참석자 중 필수만 · 선택만 골라 보냅니다</span></div></li><li><i>3</i><div><b>대기 중 표시</b><span>누가 아직 응답하지 않았는지 모두에게 보입니다</span></div></li><li><i>4</i><div><b>개설자만 리마인드</b><span>참석자 화면에는 진행률만 보입니다</span></div></li></ol></div>
+    </article>
+
+    <article class="feat rv">
+      <div class="feat-txt">
+        <span class="tag">문제 04 해결</span>
+        <h3>이전 값을 불러오되, 확인은 사람이 합니다</h3>
+        <p class="vs-line">기존 방식은 회차마다 새 링크, 새 입력입니다. 지난번 조건은 어디에도 남지 않습니다.</p>
+        <p>외근 요일과 선호·회피 시간대를 프로필에 저장해 두고, 매주 확인 모달로 바뀐 부분만 고칩니다. 이전 값을 기본으로 채워두되 확인은 사람이 합니다.</p>
+        <div class="solves"><p class="sl">이 화면이 해결하는 문제</p><div class="sv"><span>04</span><p>반복 미팅도 매번 백지에서 다시 입력한다</p><em>→ 저장한 값을 불러오고, 바뀐 것만 확인</em></div></div>
+        <ul>
+          <li>매주 상시 조건 확인 모달로 선호·가능·회피 시간대와 외근 요일을 점검합니다</li>
+          <li>동일 멤버 6명이 정확히 일치하면 지난 세팅을 프리필하고 확인 얼럿을 띄웁니다</li>
+          <li>연차 같은 이번 주만의 예외는 초대 응답 단계에서 따로 입력합니다</li>
+        </ul>
+        <div class="alt"><em>검토한 대안</em><p>확인 절차 없이 지난주 설정을 그대로 재사용하는 방식도 검토했지만, 인터뷰에서 6명 중 5명이 “상황은 항상 달라지니까” 매번 재확인한다고 답해 확인 모달을 남기는 쪽으로 정했습니다.</p></div>
+      </div>
+      <div class="feat-art col"><div class="sc-row swipe"><div class="slide"><figure class="scard"><img src="./img/s-weekly.webp" alt="홈 화면 위에 뜬 상시 조건 확인 모달. 선호·가능·회피 시간과 주요 외근 요일이 요약되어 있다." loading="lazy"><i class="mk" style="left:4%;top:17.9%">1</i><i class="mk" style="left:4%;top:45.7%">2</i></figure><p class="shotcap">홈 알림 → 상시 조건 확인</p></div><div class="slide"><figure class="scard"><img src="./img/s-reuse.webp" alt="기존 멤버로 미팅을 다시 만드는 화면. 이전 미팅과 설정이 동일하다는 안내와 함께 지난 세팅이 채워져 있다." loading="lazy"><i class="hl" style="left:4.8%;top:13.7%;width:90.4%;height:3.4%"></i><i class="mk" style="left:96%;top:15.5%">3</i><i class="mk" style="left:96%;top:55.7%">4</i><i class="mk" style="left:96%;top:87.1%">5</i></figure><p class="shotcap">재사용 프리필</p></div></div><ol class="callouts"><li><i>1</i><div><b>홈 상단 알림</b><span>이번 주 상시 조건 알림을 누르면 확인 모달이 뜹니다</span></div></li><li><i>2</i><div><b>매주 상시 조건 확인</b><span>저장된 선호 · 회피 시간과 외근 요일을 보고 바뀐 것만 수정</span></div></li><li><i>3</i><div><b>이전 설정 감지</b><span>지난 미팅과 설정이 같으면 유지할지 먼저 묻습니다</span></div></li><li><i>4</i><div><b>지난 세팅 프리필</b><span>참석자와 필수 · 선택 지정이 미리 채워집니다</span></div></li><li><i>5</i><div><b>확인 후 시작</b><span>바뀐 게 없으면 그대로 시작합니다</span></div></li></ol></div>
+    </article>
   </div>
 </section>
 <!-- ══════════ 사용 흐름 ══════════ -->
@@ -926,6 +948,7 @@ footer a:hover{color:var(--blue)}
           <div class="stat"><b>23개</b><span>Figma 화면</span></div>
           <div class="stat"><b>6명</b><span>인터뷰 참여자</span></div>
         </div>
+        <p class="tools"><span>사용 툴</span>Figma · Claude · GPT · Photoshop</p>
         <div class="contact">
           <a class="btn btn-fill" href="mailto:mary3103@naver.com">mary3103@naver.com</a>
           <a class="btn btn-line" href="https://www.figma.com/proto/XfxpuROsTDVo68HQIm1VpC/m.m?node-id=2011-4060&starting-point-node-id=2011%3A4060&scaling=min-zoom&content-scaling=fixed&show-proto-sidebar=1" target="_blank" rel="noopener">프로토타입 보기</a>
