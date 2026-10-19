@@ -294,10 +294,6 @@ nav a:hover::after{transform:scaleX(1)}
 .callout a:hover{box-shadow:inset 0 -1px 0 var(--blue)}
 .callout b{color:var(--ink)}
 .cases{display:flex;flex-direction:column;align-items:center}
-/* 세 가지 상황: 설명과 화면을 좌우로 (아래 역할 비교와 같은 배치) */
-.scen{display:flex;gap:clamp(20px,4vw,48px);flex-wrap:wrap;align-items:center}
-.scen .callout{flex:1 1 340px;min-width:280px;margin-bottom:0}
-.scen .cases{flex:1 1 400px}
 .ctabs{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:26px}
 .ctab{display:flex;align-items:center;gap:9px;padding:11px 20px;border-radius:var(--r-pill);
   border:1px solid var(--line);background:var(--card);font-size:.9063rem;font-weight:600;color:var(--gray);
@@ -307,7 +303,7 @@ nav a:hover::after{transform:scaleX(1)}
 .ctab[aria-selected="true"]{background:var(--grad);border-color:transparent;color:#fff}
 .ctab[aria-selected="true"] b{color:rgba(255,255,255,.72)}
 .case-desc{font-size:.9688rem;color:var(--gray);text-align:center;line-height:1.65;
-  max-width:46ch;min-height:3.4em;margin-bottom:26px;transition:opacity .3s ease}
+  max-width:54ch;min-height:3.4em;margin-bottom:26px;transition:opacity .3s ease}
 .case{flex:1 1 250px;min-width:230px;display:flex;flex-direction:column;align-items:center}
 .case-badge{display:inline-flex;align-items:center;justify-content:center;min-width:34px;height:26px;
   padding-inline:10px;border-radius:var(--r-pill);background:var(--grad);color:#fff;
@@ -315,20 +311,21 @@ nav a:hover::after{transform:scaleX(1)}
 .case h3{font-size:1.0625rem;font-weight:700;letter-spacing:-.03em;text-align:center;margin-bottom:8px}
 .case p{font-size:.9063rem;color:var(--gray);text-align:center;line-height:1.62;
   margin-bottom:22px;max-width:32ch;min-height:4.9em}   /* 3줄 기준 : 폰 상단선을 맞춘다 */
-.roles{display:flex;gap:clamp(20px,4vw,48px);flex-wrap:wrap;align-items:center;
-  margin-top:clamp(48px,6vw,72px);padding-top:clamp(40px,5vw,56px);border-top:1px solid var(--line)}
-.roles-txt{flex:1 1 340px;min-width:280px;padding:24px 26px;background:var(--card);
-  border:1px solid var(--line);border-left:3px solid var(--blue);border-radius:var(--r-card)}
-.roles-txt h3{font-size:1.25rem;font-weight:700;letter-spacing:-.03em}
-.roles-txt p{margin-top:12px;font-size:.9688rem;color:var(--gray);line-height:1.7}
-.roles-art{flex:1 1 400px;display:flex;gap:clamp(18px,3vw,36px);justify-content:center;flex-wrap:wrap}
-/* 좁은 화면에서는 두 역할을 탭으로 바꿔 본다 (#1 / #2 / #3 탭과 같은 방식) */
-.rtabs{display:none;flex:1 1 100%;justify-content:center;gap:10px;margin-bottom:4px}
-.rtab{padding:10px 22px;border-radius:var(--r-pill);border:1px solid var(--line);
-  background:var(--card);font:inherit;font-size:.9063rem;font-weight:600;color:var(--gray);
-  cursor:pointer;transition:background .3s var(--ease),border-color .3s,color .3s,transform .3s var(--ease)}
-.rtab:hover{border-color:var(--blue);color:var(--blue);transform:translateY(-2px)}
-.rtab[aria-selected="true"]{background:var(--grad);border-color:transparent;color:#fff;transform:none}
+
+/* 투표 결과별 시나리오 : 참석자 화면 → 개설자 화면 */
+.scn{display:flex;flex-direction:column;align-items:center}
+.spane{display:none;align-items:center;justify-content:center;gap:clamp(12px,2vw,22px);flex-wrap:wrap;width:100%}
+.spane.on{display:flex}
+.sstep{flex:0 1 220px}
+.sstep .scard{max-width:220px;margin-inline:auto}
+.sarr{font-size:1.25rem;color:var(--sub);margin-bottom:34px}
+.snext{flex:0 1 220px;align-self:center;margin-bottom:34px;padding:20px 22px;border-radius:var(--r-card);background:var(--card);
+  border:1px solid var(--line);border-left:3px solid var(--blue);transition:transform .25s var(--ease),border-color .25s}
+.snext:hover{transform:translateY(-2px);border-color:var(--blue)}
+.snext em{display:block;font-style:normal;font-size:.75rem;font-weight:700;letter-spacing:.06em;color:var(--blue)}
+.snext b{display:block;margin-top:6px;font-size:1.0625rem;letter-spacing:-.03em}
+.snext span{display:block;margin-top:6px;font-size:.8125rem;color:var(--sub);line-height:1.55}
+@media(max-width:760px){.sarr{transform:rotate(90deg);margin:0;flex:0 0 100%;text-align:center}.snext{flex:0 1 260px;margin:0}}
 
 /* ---------- 종료 보장 ---------- */
 /* 순서가 있는 단계라 카드 대신 이어지는 흐름으로 */
@@ -474,11 +471,6 @@ footer a:hover{color:var(--blue)}
   .flow-art .phone{max-width:206px;border-width:6px;border-radius:30px}
   .flow-art .phone::before{top:6px;width:62px;height:14px}
   .flow-art .screen{border-radius:24px}
-  /* 역할 비교 : 탭으로 한 화면씩 */
-  .rtabs{display:flex}
-  .roles-art .case-badge{display:none}
-  .roles-art .case{display:none;flex:1 1 100%}
-  .roles-art .case.on{display:flex}
 }
 @media(max-width:640px){
   .wrap{padding-inline:20px}
@@ -738,7 +730,7 @@ footer a:hover{color:var(--blue)}
     <div class="protos">
       <div class="protohead rv" id="paths">
         <h3>프로토타입은 세 갈래로 나눠 두었습니다</h3>
-        <p>위 12단계는 모든 분기를 담은 전체 흐름입니다. 여기에 개설자와 참석자의 경로를 따로 만들었습니다. 같은 미팅이라도 두 역할이 거치는 화면과 쓸 수 있는 기능이 다르기 때문입니다. 두 경로에서는 화면 위 구분 토글을 지웠습니다. 한 역할만 지나가므로 표시할 것이 없습니다.</p>
+        <p>위 12단계는 모든 분기를 담은 전체 흐름입니다. 여기에 개설자와 참석자의 경로를 따로 만들었습니다. 같은 미팅이라도 두 역할이 거치는 화면과 쓸 수 있는 기능이 다르기 때문입니다. 전체 흐름 화면 위의 개설자 / 참석자, #1 / #2 / #3 토글은 실제 UI가 아니라 시나리오 구분 표시입니다.</p>
       </div>
       <div class="protolist rv">
         <a class="proto main" href="https://www.figma.com/proto/XfxpuROsTDVo68HQIm1VpC/m.m?node-id=2011-4060&starting-point-node-id=2011%3A4060&scaling=min-zoom&content-scaling=fixed&show-proto-sidebar=1" target="_blank" rel="noopener">
@@ -763,7 +755,7 @@ footer a:hover{color:var(--blue)}
       <div class="alt rv">
         <em>왜 정상 흐름만 담았나</em>
         <p>개설자·참석자 경로는 첫 시도에 미팅이 확정되는 경우만 담았습니다. 두 역할의 권한 차이를 끊김 없이 한 줄로 따라가게 하려는 의도입니다. 모든 분기를 한 경로에 넣으면 역할 차이가 분기 설명에 묻힙니다.</p>
-        <p>후보가 전부 불가한 경우와 재조율 과정은 전체 흐름에 들어 있고, 이 사이트에서는 <a href="#scenario">시나리오 구분</a>과 <a href="#safety">종료 보장</a>에서 따로 다룹니다. 같은 화면이 역할에 따라 어떻게 달라지는지도 <a href="#scenario">시나리오 구분</a>에서 비교합니다.</p>
+        <p>후보가 전부 불가한 경우와 재조율 과정은 전체 흐름에 들어 있고, 이 사이트에서는 <a href="#scenario">투표 결과별 시나리오</a>와 <a href="#safety">종료 보장</a>에서 따로 다룹니다.</p>
       </div>
     </div>
   </div>
@@ -772,53 +764,29 @@ footer a:hover{color:var(--blue)}
 <section id="scenario">
   <div class="wrap">
     <div class="head rv">
-      <h2>화면 위 토글은<br>시나리오 구분 표시입니다</h2>
-      <p><b>전체 흐름</b> 프로토타입 상단의 <b>개설자 / 참석자</b>, <b>#1 / #2 / #3</b> 토글은 실제 앱 UI가 아닙니다.</p>
+      <h2>투표 결과에 따라<br>다음 화면이 달라집니다</h2>
+      <p>PM 정현우가 팀원 5명과 ‘프로젝트 킥오프’ 60분 미팅을 잡는 상황입니다. 정상 흐름만 그리면 후보가 사라졌을 때 무엇을 보여줄지가 설계에서 빠지기 때문에, 투표 결과 세 가지를 모두 그렸습니다.</p>
     </div>
 
-    <div class="scen">
-    <div class="callout rv">
-      <div>
-        <p><b>세 가지 상황을 모두 그렸습니다.</b> 투표 화면뿐 아니라 그 뒤의 결과 화면도 #1 / #2 / #3에 각각 대응합니다. 정상 흐름만 그리면 후보가 사라졌을 때 무엇을 보여줄지가 설계에서 빠지기 때문입니다.</p>
-        <p>전체 흐름 하나에 두 역할과 세 상황이 모두 들어 있어, 지금 누구의 어떤 상황인지 표시가 필요했습니다. <a href="#paths">역할별 경로</a>에서는 이 토글을 지웠습니다. 한 역할, 한 상황만 지나가므로 구분할 것이 없습니다.</p>
-      </div>
-    </div>
-
-    <div class="cases rv">
-      <div class="ctabs" role="tablist" aria-label="투표 화면 시나리오">
-        <button class="ctab" role="tab" aria-selected="true" data-key="vote1"
-          data-desc="세 후보 전부 투표할 수 있습니다. 제출하면 개설자의 확정 화면으로 넘어갑니다."><b>#1</b>후보 3안 모두 가능</button>
-        <button class="ctab" role="tab" aria-selected="false" data-key="vote2"
+    <div class="scn rv">
+      <div class="ctabs" role="tablist" aria-label="투표 결과별 시나리오">
+        <button class="ctab" role="tab" aria-selected="true" data-case="1"
+          data-desc="세 후보 모두 투표할 수 있습니다. 제출하면 개설자에게 시간 확정 화면이 열립니다."><b>#1</b>후보 3안 모두 가능</button>
+        <button class="ctab" role="tab" aria-selected="false" data-case="2"
           data-desc="불가를 누르면 실시간으로 반영됩니다. 해당 카드가 비활성화되고 누가 어려운지 이름이 표시됩니다."><b>#2</b>일부 후보 불가</button>
-        <button class="ctab" role="tab" aria-selected="false" data-key="vote3"
-          data-desc="남은 후보가 없습니다. 제출 버튼이 재조율 요청으로 바뀌며 종료 보장 흐름으로 들어갑니다."><b>#3</b>후보 3안 모두 불가</button>
+        <button class="ctab" role="tab" aria-selected="false" data-case="3"
+          data-desc="남은 후보가 없어 제출 버튼이 재조율 요청으로 바뀝니다. 개설자에게는 재조율 안내가 열리고, 종료 보장 단계로 이어집니다."><b>#3</b>후보 3안 모두 불가</button>
       </div>
-      <p class="case-desc" id="caseDesc">세 후보 전부 투표할 수 있습니다. 제출하면 개설자의 확정 화면으로 넘어갑니다.</p>
-      <div class="phone sm"><div class="screen"><img id="caseImg" src="./img/vote1.webp" alt="선택한 상황의 투표 화면"></div></div>
-    </div>
-    </div>
+      <p class="case-desc" id="caseDesc">세 후보 모두 투표할 수 있습니다. 제출하면 개설자에게 시간 확정 화면이 열립니다.</p>
 
-    <div class="roles">
-      <div class="roles-txt rv">
-        <h3>역할에 따라 같은 화면이 다르게 보입니다</h3>
-        <p>개설자와 참석자는 같은 응답 현황을 보지만, 할 수 있는 일이 다릅니다. 리마인드 발송처럼 조율을 움직이는 액션은 개설자에게만 열려 있습니다.</p>
-        <p>경로가 갈라지는 지점이 아니라, 같은 화면 안에서 권한이 갈리는 지점입니다. 그래서 이 화면에만 역할 토글을 붙였습니다.</p>
+      <div class="spane on" data-case="1">
+        <div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/sc-vote1.webp" alt="참석자의 투표 화면. 세 후보 모두 가능으로 선택되어 있다." loading="lazy"></div></figure><p class="shotcap">참석자 · 후보 투표</p></div><span class="sarr" aria-hidden="true">→</span><div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/f-result.webp" alt="개설자의 미팅 현황 화면. 추천 후보에 배지와 강조 테두리가 붙어 있다." loading="lazy"></div></figure><p class="shotcap">개설자 · 시간 확정</p></div>
       </div>
-      <div class="roles-art rv">
-        <div class="rtabs" role="tablist" aria-label="역할별 화면">
-          <button class="rtab" type="button" role="tab" aria-selected="true" data-role="host">개설자</button>
-          <button class="rtab" type="button" role="tab" aria-selected="false" data-role="guest">참석자</button>
-        </div>
-        <div class="case on" data-role="host">
-          <span class="case-badge">개설자</span>
-          <div class="phone xs"><div class="screen"><img src="./img/state.webp" alt="개설자 시점의 응답 현황 화면. 하단에 리마인드 발송 영역이 있다."></div></div>
-          <p class="shotcap">진행률 확인 + 리마인드 발송</p>
-        </div>
-        <div class="case" data-role="guest">
-          <span class="case-badge">참석자</span>
-          <div class="phone xs"><div class="screen"><img src="./img/state2.webp" alt="참석자 시점의 응답 현황 화면. 진행률만 보이고 발송 영역이 없다."></div></div>
-          <p class="shotcap">진행률 확인만 가능</p>
-        </div>
+      <div class="spane" data-case="2">
+        <div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/sc-vote2.webp" alt="참석자의 투표 화면. 김민준 님이 어려운 세 번째 후보가 비활성화되어 있다." loading="lazy"></div></figure><p class="shotcap">참석자 · 후보 투표</p></div>
+      </div>
+      <div class="spane" data-case="3">
+        <div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/sc-vote3.webp" alt="참석자의 투표 화면. 세 후보 모두 비활성화되고 하단 버튼이 재조율 요청하기로 바뀌어 있다." loading="lazy"></div></figure><p class="shotcap">참석자 · 재조율 요청</p></div><span class="sarr" aria-hidden="true">→</span><div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/reschedule.webp" alt="개설자의 재조율 안내 화면. 같은 기간 재계산과 기간 확장 중 하나를 고르고, 직접 시간 지정으로 넘어갈 수 있다." loading="lazy"></div></figure><p class="shotcap">개설자 · 재조율 안내</p></div><span class="sarr" aria-hidden="true">→</span><a class="snext" href="#safety"><em>NEXT</em><b>종료 보장</b><span>재계산 → 기간 확장 → 이의 접수 → 직접 지정</span></a>
       </div>
     </div>
   </div>
@@ -1017,33 +985,17 @@ steps.forEach(function(btn){
   });
 });
 
-/* ===== 시나리오 : 상황 탭 전환 ===== */
+/* ===== 시나리오 : 투표 결과 탭 전환 ===== */
 var ctabs = document.querySelectorAll(".ctab"),
-    cImg  = document.getElementById("caseImg"),
+    spanes = document.querySelectorAll(".spane"),
     cDesc = document.getElementById("caseDesc");
 
 ctabs.forEach(function(btn){
   btn.addEventListener("click", function(){
     ctabs.forEach(function(t){ t.setAttribute("aria-selected", "false"); });
     btn.setAttribute("aria-selected", "true");
-    cImg.style.opacity = cDesc.style.opacity = "0";
-    setTimeout(function(){
-      cImg.src = IMG_DIR + btn.dataset.key + ".webp";
-      cDesc.textContent = btn.dataset.desc;
-      cImg.style.opacity = cDesc.style.opacity = "1";
-    }, 170);
-  });
-});
-
-/* ===== 역할 비교 : 좁은 화면에서 탭 전환 ===== */
-var rtabs = document.querySelectorAll(".rtab"),
-    rcases = document.querySelectorAll(".roles-art .case");
-
-rtabs.forEach(function(btn){
-  btn.addEventListener("click", function(){
-    rtabs.forEach(function(t){ t.setAttribute("aria-selected", "false"); });
-    btn.setAttribute("aria-selected", "true");
-    rcases.forEach(function(c){ c.classList.toggle("on", c.dataset.role === btn.dataset.role); });
+    cDesc.textContent = btn.dataset.desc;
+    spanes.forEach(function(p){ p.classList.toggle("on", p.dataset.case === btn.dataset.case); });
   });
 });
 
