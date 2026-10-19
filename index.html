@@ -773,17 +773,17 @@ footer a:hover{color:var(--blue)}
         <button class="ctab" role="tab" aria-selected="true" data-case="1"
           data-desc="세 후보 모두 투표할 수 있습니다. 제출하면 개설자에게 시간 확정 화면이 열립니다."><b>#1</b>후보 3안 모두 가능</button>
         <button class="ctab" role="tab" aria-selected="false" data-case="2"
-          data-desc="불가를 누르면 실시간으로 반영됩니다. 해당 카드가 비활성화되고 누가 어려운지 이름이 표시됩니다."><b>#2</b>일부 후보 불가</button>
+          data-desc="필수 참석자가 어려운 후보는 비활성화되고 누가 어려운지 이름이 표시됩니다. 개설자는 남은 후보 중에서 확정합니다."><b>#2</b>일부 후보 불가</button>
         <button class="ctab" role="tab" aria-selected="false" data-case="3"
           data-desc="남은 후보가 없어 제출 버튼이 재조율 요청으로 바뀝니다. 개설자에게는 재조율 안내가 열리고, 종료 보장 단계로 이어집니다."><b>#3</b>후보 3안 모두 불가</button>
       </div>
       <p class="case-desc" id="caseDesc">세 후보 모두 투표할 수 있습니다. 제출하면 개설자에게 시간 확정 화면이 열립니다.</p>
 
       <div class="spane on" data-case="1">
-        <div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/sc-vote1.webp" alt="참석자의 투표 화면. 세 후보 모두 가능으로 선택되어 있다." loading="lazy"></div></figure><p class="shotcap">참석자 · 후보 투표</p></div><span class="sarr" aria-hidden="true">→</span><div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/f-result.webp" alt="개설자의 미팅 현황 화면. 추천 후보에 배지와 강조 테두리가 붙어 있다." loading="lazy"></div></figure><p class="shotcap">개설자 · 시간 확정</p></div>
+        <div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/sc-vote1.webp" alt="참석자의 투표 화면. 세 후보 모두 가능으로 선택되어 있다." loading="lazy"></div></figure><p class="shotcap">참석자 · 후보 투표</p></div><span class="sarr" aria-hidden="true">→</span><div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/sc-result1.webp" alt="개설자의 미팅 현황 화면. 세 후보 모두 필수 참석자 전원이 가능하고, 추천 후보에 배지와 강조 테두리가 붙어 있다." loading="lazy"></div></figure><p class="shotcap">개설자 · 시간 확정</p></div>
       </div>
       <div class="spane" data-case="2">
-        <div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/sc-vote2.webp" alt="참석자의 투표 화면. 김민준 님이 어려운 세 번째 후보가 비활성화되어 있다." loading="lazy"></div></figure><p class="shotcap">참석자 · 후보 투표</p></div>
+        <div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/sc-vote2.webp" alt="참석자의 투표 화면. 김민준 님이 어려운 세 번째 후보가 비활성화되어 있다." loading="lazy"></div></figure><p class="shotcap">참석자 · 후보 투표</p></div><span class="sarr" aria-hidden="true">→</span><div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/f-result.webp" alt="개설자의 미팅 현황 화면. 김민준 님이 어려운 세 번째 후보는 비활성화되고, 남은 두 후보 중 추천 후보에 배지가 붙어 있다." loading="lazy"></div></figure><p class="shotcap">개설자 · 시간 확정</p></div>
       </div>
       <div class="spane" data-case="3">
         <div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/sc-vote3.webp" alt="참석자의 투표 화면. 세 후보 모두 비활성화되고 하단 버튼이 재조율 요청하기로 바뀌어 있다." loading="lazy"></div></figure><p class="shotcap">참석자 · 재조율 요청</p></div><span class="sarr" aria-hidden="true">→</span><div class="sstep"><figure class="scard"><div class="sc-in"><img src="./img/reschedule.webp" alt="개설자의 재조율 안내 화면. 같은 기간 재계산과 기간 확장 중 하나를 고르고, 직접 시간 지정으로 넘어갈 수 있다." loading="lazy"></div></figure><p class="shotcap">개설자 · 재조율 안내</p></div><span class="sarr" aria-hidden="true">→</span><a class="snext" href="#safety"><em>NEXT</em><b>종료 보장</b><span>재계산 → 기간 확장 → 이의 접수 → 직접 지정</span></a>
