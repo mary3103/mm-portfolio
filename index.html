@@ -370,6 +370,23 @@ nav a:hover::after{transform:scaleX(1)}
 @media(max-width:760px){.sarr{transform:rotate(90deg);margin:0;flex:0 0 100%;text-align:center}.snext{flex:0 1 260px;margin:0}}
 
 /* ---------- 종료 보장 ---------- */
+.xcomp{margin-top:clamp(28px,4vw,44px);padding:24px 26px;background:var(--card);border:1px solid var(--line);border-radius:var(--r-card)}
+.xcomp h3{font-size:1.0625rem;font-weight:700;letter-spacing:-.03em;margin-bottom:14px}
+.xcomp table{width:100%;border-collapse:collapse;font-size:.9375rem}
+.xcomp th,.xcomp td{padding:12px 10px;text-align:left;border-bottom:1px solid var(--line)}
+.xcomp thead th{font-size:.8125rem;font-weight:600;color:var(--sub);border-bottom:1px solid #D8D8DE}
+.xcomp tbody th{width:22%;white-space:nowrap;font-weight:600;color:var(--sub);font-size:.875rem}
+.xcomp td{color:var(--ink)}
+.xcomp td b{color:var(--blue)}
+.xcomp thead{display:table-header-group}
+.xcomp thead th{letter-spacing:0;font-weight:600}
+.xcomp tbody tr{display:table-row;padding:0}
+.xcomp tbody tr:hover{background:none}
+.xcomp tbody td,.xcomp tbody td:first-child,.xcomp tbody td:nth-child(2),.xcomp tbody td:last-child{display:table-cell;padding:12px 10px;margin:0;color:var(--ink);font-weight:400;font-size:.9375rem;white-space:normal;border-top:0}
+.xcomp tbody tr+tr{border-top:0}
+@media(max-width:640px){.xcomp{padding:18px 16px}.xcomp th,.xcomp tbody td,.xcomp tbody td:first-child,.xcomp tbody td:nth-child(2),.xcomp tbody td:last-child{padding:10px 6px;font-size:.8125rem}}
+.xcomp p{margin-top:14px;font-size:.875rem;color:var(--gray);line-height:1.65}
+
 /* 순서가 있는 단계라 카드 대신 이어지는 흐름으로 */
 .chain{display:flex;flex-wrap:wrap;gap:0}
 .link{flex:1 1 230px;min-width:210px;padding-right:28px;position:relative}
@@ -930,14 +947,26 @@ footer a:hover{color:var(--blue)}
     </div>
     <div class="chain">
       <div class="link rv"><b>1</b><h3>같은 기간 재계산</h3><p>가장 부담이 적은 방법입니다. 마감은 그대로 두고 회피 시간대까지 포함해 다시 계산하며, 화면에 그 사실을 명시합니다.</p></div>
-      <div class="link rv"><b>2</b><h3>기간 확장 (1회 한정)</h3><p>마감을 3일 연장합니다. 다만 늘어난 기간에 새로 생긴 후보가 특정 참석자에게는 맞지 않을 수 있어, 다음 단계인 이의 접수로 이어집니다.</p></div>
-      <div class="link rv"><b>3</b><h3>이의 접수</h3><p>확장된 기간의 후보가 맞지 않는 참석자는 사유를 들어 이의를 제기합니다. 일반 확장은 24시간, 강제 확장은 2시간 안에 받습니다.</p></div>
-      <div class="link last rv"><b>4</b><h3>개설자 직접 지정<span class="endtag">여기서 종료</span></h3><p>위 세 단계로도 해결되지 않으면 자동 조율을 완전히 멈춥니다. 외근 요일만 지킨 채 개설자가 시간을 지정하고, 투표 없이 즉시 확정합니다. 가장 부담이 크지만 확실하게 끝나는 방법입니다.</p></div>
+      <div class="link rv"><b>2</b><h3>기간 확장 (1회 한정)</h3><p>마감을 3일 연장합니다. 개설자가 직접 고르는 일반 확장과, 재계산이 3회 연속 실패하면 자동으로 걸리는 강제 확장이 있습니다. 둘을 합쳐 1회만 쓸 수 있어 재조율이 끝없이 반복되지 않습니다.</p></div>
+      <div class="link rv"><b>3</b><h3>이의 접수</h3><p>확장된 기간이 맞지 않는 참석자는 이의를 제기합니다. 일반 확장은 24시간, 강제 확장은 긴박성을 우선해 2시간만 받습니다.</p></div>
+      <div class="link last rv"><b>4</b><h3>개설자 직접 지정<span class="endtag">여기서 종료</span></h3><p>확장을 쓴 뒤에도 후보가 없으면 자동 조율을 멈춥니다. 외근 요일만 지킨 채 개설자가 시간을 지정하고, 투표 없이 즉시 확정해 참석자에게 통보합니다. 일반 확장을 이미 썼다면 재계산 3회 실패 즉시 이 단계로 넘어옵니다.</p></div>
+    </div>
+    <div class="xcomp rv">
+      <h3>일반 확장과 강제 확장</h3>
+      <table>
+        <thead><tr><th scope="col">구분</th><th scope="col">일반 확장</th><th scope="col">강제 확장</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">발동</th><td>개설자가 직접 선택</td><td>재계산 3회 실패 후 자동 발동</td></tr>
+          <tr><th scope="row">기간</th><td>원 마감 +3일</td><td>원 마감 +3일</td></tr>
+          <tr><th scope="row">이의 접수</th><td>24시간</td><td><b>2시간</b></td></tr>
+        </tbody>
+      </table>
+      <p>두 확장은 합쳐서 1회만 쓸 수 있습니다. 강제 확장 2회 안도 검토했지만 횟수를 늘릴 근거가 없어 1회로 유지했습니다.</p>
     </div>
     <div class="tradeoff rv">
       <div>
         <h3><span class="steptag">3단계</span>여기서 감수한 트레이드오프</h3>
-        <p>필수 참석자의 이의가 개설자 승인 없이 방치되면, 해당 참석자는 선택 참석자로 강등된 뒤 진행됩니다.</p>
+        <p>개설자가 이의에 1시간 안에 응답하지 않으면, 이의를 제기한 참석자만 선택 참석자로 강등되고 확장은 그대로 유지됩니다.</p>
         <p>필수 참석자를 보호하려던 원래 취지와 상충합니다. 그럼에도 이 규칙을 넣은 이유는, 개설자의 무응답이 조율 전체를 무한정 붙잡아 두는 상황을 막을 다른 방법을 찾지 못했기 때문입니다. 종료 보장을 위해 의도적으로 감수한 손해입니다.</p>
       </div>
       <img class="modalshot" style="max-width:280px" src="./img/appeal.webp" alt="이의 제기 모달. 사유 선택지 세 가지가 제시된다.">
