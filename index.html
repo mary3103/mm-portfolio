@@ -608,7 +608,18 @@ footer a:hover{color:var(--blue)}
   .hero-art{display:flex;flex:0 0 44%;margin-top:0;justify-content:flex-start;align-items:center}
   .phone.lead{max-width:none;width:78%;border-width:8px;border-radius:38px}
   .phone.lead .screen{border-radius:30px}
-  .phone.trail{display:block;max-width:none;width:66%;margin-left:-22%;transform:translateY(24px)}
+  .phone.trail{display:none}
+  .hero-art{justify-content:center}
+  .phone.lead{width:80%;background:#111;border-color:#161618;
+    box-shadow:0 0 0 1.5px #4a4a4e,0 0 0 3px #1c1c1e,0 30px 60px -20px rgba(20,20,60,.35)}
+  /* 측면 버튼 : 왼쪽 액션 · 음량 +/- , 오른쪽 전원 */
+  .hw{position:absolute;display:block;width:4px;border-radius:2px;background:linear-gradient(90deg,#2a2a2d,#5a5a5f 60%,#2a2a2d)}
+  .hw-l{left:-14px;top:15%;height:5%;box-shadow:0 calc(var(--ph,600px)*.075) 0 0 #3d3d41}
+  .hw-l::before,.hw-l::after{content:"";position:absolute;left:0;width:4px;border-radius:2px;background:inherit}
+  .hw-l::before{top:180%;height:220%}
+  .hw-l::after{top:440%;height:220%}
+  .hw-l{box-shadow:none}
+  .hw-r{right:-14px;top:24%;height:14%}
   .screen video{width:100%;height:100%;object-fit:cover;display:block}
   .scrollcue{display:block;position:absolute;left:calc(28% - 14px);bottom:22px;z-index:3;width:28px;height:28px;color:var(--sub);animation:cue 1.6s ease-in-out infinite}
   .scrollcue svg{width:100%;height:100%}
@@ -667,7 +678,7 @@ footer a:hover{color:var(--blue)}
       </dl>
     </div>
     <div class="hero-art">
-      <div class="phone lead"><div class="screen"><video id="obVid" muted playsinline preload="none" poster="./img/onboard-poster.webp" aria-label="m.m 온보딩 애니메이션. 로고와 소개 문구, 메신저 연동 버튼이 차례로 나타난다."><source src="./img/onboard.webm" type="video/webm"><source src="./img/onboard.mp4" type="video/mp4"></video></div></div>
+      <div class="phone lead"><i class="hw hw-l" aria-hidden="true"></i><i class="hw hw-r" aria-hidden="true"></i><div class="screen"><video id="obVid" muted playsinline preload="none" poster="./img/onboard-poster.webp" aria-label="m.m 온보딩 애니메이션. 로고와 소개 문구, 메신저 연동 버튼이 차례로 나타난다."><source src="./img/onboard.webm" type="video/webm"><source src="./img/onboard.mp4" type="video/mp4"></video></div></div>
       <div class="phone trail"><div class="screen"><img src="./img/hero-create.webp" alt="새 미팅 만들기 화면. 참석자마다 필수 또는 선택 태그가 붙어 있다."></div></div>
     </div>
   </div>
