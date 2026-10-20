@@ -146,6 +146,7 @@ nav a:hover::after{transform:scaleX(1)}
 /* 900px 이하 : 기존 순서(제목 → 설명) 유지 */
 @media(max-width:900px){.hero-copy{display:flex;flex-direction:column}.hero-copy h1{order:2}.hero-desc{order:3}.hero-meta{order:4}.hero-desc br{display:none}}
 
+
 /* ---------- 폰 목업 ---------- */
 .phone{position:relative;width:100%;max-width:288px;
   border:9px solid #101010;border-radius:42px;background:#101010;
@@ -555,6 +556,37 @@ footer a:hover{color:var(--blue)}
   *,*::before,*::after{animation:none!important;transition-duration:.01ms!important}
   .rv{opacity:1;transform:none}
 }
+
+/* ---------- 모바일 히어로 (640px 이하) : 온보딩 영상 → 포트폴리오 보러가기 → 디졸브 ---------- */
+.intro,.scrollcue{display:none}
+@media(max-width:640px){
+  .hero{min-height:100svh;padding:62px 0 0;align-items:center}
+  .hero-art,.drop{display:none!important}
+  .hero .wrap{padding-block:40px 96px}
+  .hero-copy{align-items:center;text-align:center}
+  .hero .hero-tag,.hero-brand span{display:none}
+  .hero-brand{flex-direction:column;gap:10px;margin-bottom:28px}
+  .hero-brand .mark{width:52px}
+  .hero-brand .lt{width:104px}
+  .hero h1{margin-top:0;font-size:1.5rem;line-height:1.35}
+  .hero .hero-desc{margin-top:16px;font-size:.875rem;line-height:1.6;color:var(--sub)}
+  .hero-desc br{display:inline}
+  .hero-meta{align-self:stretch;text-align:left;grid-template-columns:1fr;gap:14px;margin-top:44px;padding:0 4px;border:0}
+  .hero-meta div{display:block;padding:0;border:0}
+  .hero-meta dt{font-size:.75rem}
+  .hero-meta dd{margin:3px 0 0;text-align:left;font-size:.875rem}
+  .scrollcue{display:block;position:absolute;left:50%;bottom:22px;z-index:3;width:28px;height:28px;margin-left:-14px;color:var(--sub);animation:cue 1.6s ease-in-out infinite}
+  .scrollcue svg{width:100%;height:100%}
+  .intro{display:block;position:absolute;left:0;right:0;top:62px;bottom:0;z-index:5;overflow:hidden;background:#E3E1F3;transition:opacity .7s ease,visibility 0s linear .7s}
+  .intro[hidden]{display:none}
+  .intro video{width:100%;height:100%;object-fit:cover;display:block}
+  .intro-go{position:absolute;border:0;padding:0;background:transparent;border-radius:12px;cursor:pointer;opacity:0;pointer-events:none}
+  .intro-go.on{pointer-events:auto}
+  .intro-go:focus-visible{opacity:1;outline:3px solid #fff;outline-offset:2px}
+  .intro.out{opacity:0;visibility:hidden}
+}
+@keyframes cue{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
+@media(prefers-reduced-motion:reduce){.scrollcue{animation:none}}
 </style>
 </head>
 
@@ -580,6 +612,11 @@ footer a:hover{color:var(--blue)}
 
 <!-- ══════════ HERO ══════════ -->
 <section class="hero" id="top">
+  <div class="intro" id="intro" hidden>
+    <video muted playsinline preload="none" poster="./img/intro-poster.webp" aria-label="m.m 온보딩 애니메이션"><source src="./img/intro.webm" type="video/webm"><source src="./img/intro.mp4" type="video/mp4"></video>
+    <button class="intro-go" type="button" aria-label="포트폴리오 보러가기"></button>
+  </div>
+  <a class="scrollcue" href="#problem" aria-label="아래로 스크롤"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l6 6 6-6M6 12l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   <div class="circles" aria-hidden="true"><i class="c1"></i><i class="c2"></i><i class="c3"></i></div>
   <div class="drop" aria-hidden="true">
     <img class="bgt met" src="./img/bg-met.svg" alt="">
@@ -1097,6 +1134,37 @@ document.querySelectorAll(".scard").forEach(function(sc){
   });
   sc.addEventListener("mouseleave", function(){ inner.style.transform = "none"; });
 });
+
+/* ===== 모바일 히어로 : 온보딩 영상 후 '포트폴리오 보러가기' ===== */
+(function(){
+  var intro = document.getElementById("intro");
+  if (!intro || !window.matchMedia("(max-width:640px)").matches) return;
+  var vid = intro.querySelector("video"), go = intro.querySelector(".intro-go");
+  var VW = 372, VH = 810, BX = 18.5, BY = 633, BW = 335, BH = 52;   // 영상 속 버튼 위치
+  function place(){
+    var W = intro.clientWidth, H = intro.clientHeight, s = Math.max(W / VW, H / VH),
+        ox = (W - VW * s) / 2, oy = (H - VH * s) / 2;
+    go.style.left = (ox + BX * s) + "px"; go.style.top = (oy + BY * s) + "px";
+    go.style.width = (BW * s) + "px";     go.style.height = (BH * s) + "px";
+  }
+  function ready(){ go.classList.add("on"); }
+  intro.hidden = false;
+  document.documentElement.style.overflow = "hidden";       // 버튼을 누르기 전에는 스크롤 잠금
+  place(); window.addEventListener("resize", place);
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) { ready(); }
+  else {
+    vid.addEventListener("timeupdate", function(){ if (vid.currentTime >= 4.4) ready(); });
+    vid.addEventListener("ended", ready);
+    vid.addEventListener("error", ready, true);
+    setTimeout(ready, 5200);                                 // 영상이 재생되지 않아도 버튼은 열린다
+    var p = vid.play(); if (p && p.catch) p.catch(ready);   // 자동재생이 막히면 포스터 + 버튼
+  }
+  go.addEventListener("click", function(){
+    intro.classList.add("out");
+    document.documentElement.style.overflow = "";
+    setTimeout(function(){ intro.hidden = true; }, 750);
+  });
+})();
 </script>
 
 </body>
