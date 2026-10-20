@@ -114,6 +114,37 @@ nav a:hover::after{transform:scaleX(1)}
 .phone.lead{max-width:268px;z-index:1}                       /* 앞 : 온보딩 애니메이션 */
 .phone.trail{max-width:236px;margin-left:-32px;transform:translateY(28px);z-index:0}
 
+/* PC 히어로 : 기울어진 폰 두 대가 위에서 차례로 떨어진다 (900px 이하에서는 기존 폰 목업) */
+.drop{display:none}
+@media(min-width:901px){
+  .hero{min-height:calc(min(100vw,1440px)*.595 + 68px);padding-top:68px;padding-bottom:0}
+  .drop{display:block;position:absolute;left:50%;top:68px;transform:translateX(-50%);width:min(100%,1440px);aspect-ratio:1440/857;z-index:1;pointer-events:none;clip-path:inset(0 -50vw -50vw -50vw)}
+  .hero .wrap{z-index:2}
+  .hero-art{display:none}
+  .hero-copy{flex:0 1 auto;max-width:500px}
+  .hero h1{font-size:clamp(2rem,2.8vw,2.5rem)}
+  .hero .hero-desc{font-size:.9375rem;margin-top:0;max-width:none;line-height:1.6}
+  .hero-brand{margin-bottom:16px}
+  .hero h1{margin-top:clamp(48px,6vw,88px)}
+  .hero-meta{border-top:0;padding-top:0;margin-top:32px}
+  .bgt{position:absolute;opacity:.07}
+  .bgt.met{left:42.2%;top:8.4%;width:26.2%}
+  .bgt.meet{left:6.7%;top:74.3%;width:43%}
+  .dph{position:absolute;filter:drop-shadow(0 30px 40px rgba(20,20,60,.18))}
+  .dph.p1{left:44.7%;top:26.2%;width:28.7%;animation:drop .95s cubic-bezier(.3,.7,.3,1) .25s both}
+  .dph.p2{left:63.6%;top:2.5%;width:30.6%;animation:drop .95s cubic-bezier(.3,.7,.3,1) .55s both}
+}
+@keyframes drop{
+  0%{transform:translateY(-120vh) rotate(-8deg);opacity:0}
+  12%{opacity:1}
+  70%{transform:translateY(2.5%) rotate(.6deg)}
+  86%{transform:translateY(-.8%) rotate(-.2deg)}
+  100%{transform:none;opacity:1}
+}
+@media(prefers-reduced-motion:reduce){.dph{animation:none!important}}
+/* 900px 이하 : 기존 순서(제목 → 설명) 유지 */
+@media(max-width:900px){.hero-copy{display:flex;flex-direction:column}.hero-copy h1{order:2}.hero-desc{order:3}.hero-meta{order:4}.hero-desc br{display:none}}
+
 /* ---------- 폰 목업 ---------- */
 .phone{position:relative;width:100%;max-width:288px;
   border:9px solid #101010;border-radius:42px;background:#101010;
@@ -549,6 +580,12 @@ footer a:hover{color:var(--blue)}
 <!-- ══════════ HERO ══════════ -->
 <section class="hero" id="top">
   <div class="circles" aria-hidden="true"><i class="c1"></i><i class="c2"></i><i class="c3"></i></div>
+  <div class="drop" aria-hidden="true">
+    <img class="bgt met" src="./img/bg-met.svg" alt="">
+    <img class="bgt meet" src="./img/bg-meet.svg" alt="">
+    <img class="dph p1" src="./img/hero-state.webp" alt="">
+    <img class="dph p2" src="./img/hero-create3d.webp" alt="">
+  </div>
   <div class="wrap">
     <div class="hero-copy">
       <p class="hero-tag">2026 개인 작업</p>
@@ -556,10 +593,10 @@ footer a:hover{color:var(--blue)}
         <img class="mark" src="./img/mm-mark.svg" alt="" width="54" height="49">
         <div><img class="lt" src="./img/metmeet.svg" alt="met? meet!" width="155" height="24"><span><b>일정 조율</b>에 지친 당신을 위해</span></div>
       </div>
+      <p class="hero-desc">Slack 같은 업무 메신저에 붙는 다인원 회의 조율 앱. <br>별도 링크도, 별도 로그인도 없습니다.</p>
       <h1>모두가 되는 시간이 아니라,<br><em>꼭 필요한 사람이 되는 시간</em></h1>
-      <p>Slack 같은 업무 메신저에 붙는 다인원 회의 조율 앱. 별도 링크도, 별도 로그인도 없습니다.</p>
       <dl class="hero-meta">
-        <div><dt>서비스</dt><dd>업무 메신저 부가 서비스</dd></div>
+        <div><dt>서비스</dt><dd>업무 메신저 부가 서비스 - 일정 조율</dd></div>
         <div><dt>작업 기간</dt><dd>2개월 · 1인</dd></div>
         <div><dt>기여도</dt><dd>리서치 · UX · UI · 프로토타입 100%</dd></div>
         <div><dt>사용 툴</dt><dd>Figma · Claude · GPT · Photoshop</dd></div>
