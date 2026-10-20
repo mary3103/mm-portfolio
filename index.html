@@ -584,6 +584,7 @@ footer a:hover{color:var(--blue)}
   .intro-go.on{pointer-events:auto}
   .intro-go:focus-visible{opacity:1;outline:3px solid #fff;outline-offset:2px}
   .intro.out{opacity:0;visibility:hidden}
+  .intro-skip{position:absolute;top:14px;right:16px;z-index:2;padding:7px 14px;border:0;border-radius:999px;background:rgba(255,255,255,.62);color:var(--gray);font:inherit;font-size:.8125rem;font-weight:600;cursor:pointer;backdrop-filter:blur(6px)}
 }
 @keyframes cue{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
 @media(prefers-reduced-motion:reduce){.scrollcue{animation:none}}
@@ -652,6 +653,7 @@ footer a:hover{color:var(--blue)}
   <div class="intro" id="intro" hidden>
     <video muted playsinline preload="none" poster="./img/intro-poster.webp" aria-label="m.m 온보딩 애니메이션"><source src="./img/intro.webm" type="video/webm"><source src="./img/intro.mp4" type="video/mp4"></video>
     <button class="intro-go" type="button" aria-label="포트폴리오 보러가기"></button>
+    <button class="intro-skip" type="button">건너뛰기</button>
   </div>
   <a class="scrollcue" href="#problem" aria-label="아래로 스크롤"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l6 6 6-6M6 12l6 6 6-6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
   <div class="circles" aria-hidden="true"><i class="c1"></i><i class="c2"></i><i class="c3"></i></div>
@@ -1196,11 +1198,16 @@ document.querySelectorAll(".scard").forEach(function(sc){
     setTimeout(ready, 5200);                                 // 영상이 재생되지 않아도 버튼은 열린다
     var p = vid.play(); if (p && p.catch) p.catch(ready);   // 자동재생이 막히면 포스터 + 버튼
   }
-  go.addEventListener("click", function(){
+  function leave(){
+    if (intro.classList.contains("out")) return;
     intro.classList.add("out");
     document.documentElement.style.overflow = "";
+    try { vid.pause(); } catch(e){}
     setTimeout(function(){ intro.hidden = true; }, 750);
-  });
+  }
+  go.addEventListener("click", leave);
+  intro.querySelector(".intro-skip").addEventListener("click", leave);
+  vid.addEventListener("click", leave);                     // 영상 아무 곳이나 눌러도 건너뛴다
 })();
 
 /* ===== 태블릿 히어로 : 오른쪽 폰 온보딩 영상 (끝 화면 2.5초 유지 후 반복) ===== */
