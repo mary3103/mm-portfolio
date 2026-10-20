@@ -587,6 +587,32 @@ footer a:hover{color:var(--blue)}
 }
 @keyframes cue{0%,100%{transform:translateY(0)}50%{transform:translateY(7px)}}
 @media(prefers-reduced-motion:reduce){.scrollcue{animation:none}}
+
+/* ---------- 태블릿 히어로 (641~900px) : 왼쪽 표지 + 오른쪽 온보딩 영상 폰 ---------- */
+@media(min-width:641px) and (max-width:900px){
+  .hero{min-height:100svh;padding:68px 0 0;align-items:center}
+  .drop{display:none!important}
+  .hero .wrap{flex-wrap:nowrap;align-items:center;gap:28px;padding-block:32px 88px}
+  .hero-copy{flex:1 1 0;min-width:0;align-items:center;text-align:center}
+  .hero .hero-tag,.hero-brand span{display:none}
+  .hero-brand{flex-direction:column;gap:10px;margin-bottom:26px}
+  .hero-brand .mark{width:50px}
+  .hero-brand .lt{width:104px}
+  .hero h1{margin-top:0;font-size:clamp(1.375rem,3.3vw,1.75rem);line-height:1.35}
+  .hero .hero-desc{margin-top:14px;font-size:.875rem;line-height:1.6;color:var(--sub);max-width:none}
+  .hero-desc br{display:inline}
+  .hero-meta{align-self:stretch;text-align:left;grid-template-columns:1fr;gap:14px;margin-top:40px;padding:0 0 0 clamp(0px,4vw,32px);border:0}
+  .hero-meta div{display:block;padding:0;border:0}
+  .hero-meta dt{font-size:.75rem}
+  .hero-meta dd{margin:3px 0 0;text-align:left;font-size:.875rem}
+  .hero-art{display:flex;flex:0 0 44%;margin-top:0;justify-content:flex-start;align-items:center}
+  .phone.lead{max-width:none;width:78%;border-width:8px;border-radius:38px}
+  .phone.lead .screen{border-radius:30px}
+  .phone.trail{display:block;max-width:none;width:66%;margin-left:-22%;transform:translateY(24px)}
+  .screen video{width:100%;height:100%;object-fit:cover;display:block}
+  .scrollcue{display:block;position:absolute;left:calc(28% - 14px);bottom:22px;z-index:3;width:28px;height:28px;color:var(--sub);animation:cue 1.6s ease-in-out infinite}
+  .scrollcue svg{width:100%;height:100%}
+}
 </style>
 </head>
 
@@ -641,7 +667,7 @@ footer a:hover{color:var(--blue)}
       </dl>
     </div>
     <div class="hero-art">
-      <div class="phone lead"><div class="screen"><img id="obImg" src="./img/onboarding.webp" alt="m.m 온보딩 애니메이션. 로고와 소개 문구, 메신저 연동 버튼이 차례로 나타난다."></div></div>
+      <div class="phone lead"><div class="screen"><video id="obVid" muted playsinline preload="none" poster="./img/onboard-poster.webp" aria-label="m.m 온보딩 애니메이션. 로고와 소개 문구, 메신저 연동 버튼이 차례로 나타난다."><source src="./img/onboard.webm" type="video/webm"><source src="./img/onboard.mp4" type="video/mp4"></video></div></div>
       <div class="phone trail"><div class="screen"><img src="./img/hero-create.webp" alt="새 미팅 만들기 화면. 참석자마다 필수 또는 선택 태그가 붙어 있다."></div></div>
     </div>
   </div>
@@ -1164,6 +1190,15 @@ document.querySelectorAll(".scard").forEach(function(sc){
     document.documentElement.style.overflow = "";
     setTimeout(function(){ intro.hidden = true; }, 750);
   });
+})();
+
+/* ===== 태블릿 히어로 : 오른쪽 폰 온보딩 영상 (끝 화면 2.5초 유지 후 반복) ===== */
+(function(){
+  var v = document.getElementById("obVid");
+  if (!v || !window.matchMedia("(min-width:641px) and (max-width:900px)").matches) return;
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;   // 포스터(완성 화면)만
+  v.addEventListener("ended", function(){ setTimeout(function(){ v.currentTime = 0; v.play(); }, 2500); });
+  var p = v.play(); if (p && p.catch) p.catch(function(){});
 })();
 </script>
 
